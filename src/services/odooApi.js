@@ -2,10 +2,20 @@ const DEFAULT_BASE = 'http://localhost:8069/warm_paws/api';
 
 export const ODOO_API_BASE = import.meta.env.VITE_ODOO_API_BASE || DEFAULT_BASE;
 
+function authHeader() {
+  try {
+    const user = JSON.parse(localStorage.getItem('warm-paws:user') || 'null');
+    return user?.token ? { Authorization: `Bearer ${user.token}` } : {};
+  } catch {
+    return {};
+  }
+}
+
 async function request(path, options = {}) {
   const response = await fetch(`${ODOO_API_BASE}${path}`, {
     headers: {
       'Content-Type': 'application/json',
+      ...authHeader(),
       ...(options.headers || {}),
     },
     ...options,
@@ -40,6 +50,32 @@ export const odooApi = {
       body: JSON.stringify(payload),
     });
   },
+  createAdoptionApplication(payload) {
+    return request('/adoption-applications', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+  getMyAdoptionApplications() {
+    return request('/me/adoption-applications');
+  },
+  getMyAdoptionRecords() {
+    return request('/me/adoption-records');
+  },
+  createVisitAppointment(payload) {
+    return request('/visit-appointments', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+  cancelVisitAppointment(id) {
+    return request(`/visit-appointments/${id}/cancel`, {
+      method: 'POST',
+    });
+  },
+  getMyVisitAppointments() {
+    return request('/me/visit-appointments');
+  },
   createVolunteerApplication(payload) {
     return request('/volunteer-applications', {
       method: 'POST',
@@ -62,6 +98,24 @@ export const odooApi = {
     return request('/login', {
       method: 'POST',
       body: JSON.stringify(payload),
+    });
+  },
+  getMe() {
+    return request('/me');
+  },
+  updateMe(payload) {
+    return request('/me', {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+  },
+  getMyFavorites() {
+    return request('/me/favorites');
+  },
+  toggleMyFavorite(animalId) {
+    return request('/me/favorites', {
+      method: 'POST',
+      body: JSON.stringify({ animalId }),
     });
   },
   toggleFavorite(memberId, animalId) {

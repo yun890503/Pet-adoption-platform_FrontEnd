@@ -16,6 +16,10 @@ function write(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
+function emitUserChanged(user) {
+  window.dispatchEvent(new CustomEvent('warm-paws:user-changed', { detail: user || null }));
+}
+
 export function getFavorites() {
   return read(keys.favorites, []);
 }
@@ -40,8 +44,14 @@ export function getApplications() {
 
 export function saveUser(user) {
   write(keys.user, user);
+  emitUserChanged(user);
 }
 
 export function getUser() {
   return read(keys.user, null);
+}
+
+export function clearUser() {
+  localStorage.removeItem(keys.user);
+  emitUserChanged(null);
 }

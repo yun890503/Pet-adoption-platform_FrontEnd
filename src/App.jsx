@@ -14,6 +14,9 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Profile from './pages/Profile.jsx';
 import Favorites from './pages/Favorites.jsx';
+import ProfileApplications from './pages/ProfileApplications.jsx';
+import VisitBooking from './pages/VisitBooking.jsx';
+import AdoptionRecords from './pages/AdoptionRecords.jsx';
 
 export default function App() {
   return (
@@ -31,6 +34,9 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/applications" element={<ProfileApplications />} />
+        <Route path="/profile/records" element={<AdoptionRecords />} />
+        <Route path="/profile/appointments" element={<VisitBooking />} />
         <Route path="/favorites" element={<Favorites />} />
       </Routes>
       <Footer />

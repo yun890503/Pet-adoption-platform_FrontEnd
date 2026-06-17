@@ -4,8 +4,8 @@ import { PageHeader } from './Animals.jsx';
 export default function Contact() {
   return (
     <Box>
-      <PageHeader title="聯絡我們" subtitle="有任何認養、志工或照護問題，都歡迎和我們聊聊。" />
-      <Container maxW="1180px" py={12}>
+      {/* <PageHeader title="聯絡我們" subtitle="有任何認養、志工或照護問題，都歡迎和我們聊聊。" /> */}
+      <Container maxW="1280px" py={{ base: 8, md: 12 }} px={{ base: 4, md: 8 }}>
         <Grid templateColumns={{ base: '1fr', lg: '0.9fr 1.1fr' }} gap={8}>
           <VStack align="stretch" bg="white" rounded="28px" p={8} boxShadow="lg" spacing={4}>
             <Heading fontSize="2xl" color="warm.brown">

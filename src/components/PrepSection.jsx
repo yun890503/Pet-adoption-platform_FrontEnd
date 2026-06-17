@@ -39,9 +39,9 @@ export default function PrepSection() {
               _hover={{ transform: 'translateY(-6px)', boxShadow: '0 16px 30px rgba(111, 69, 31, 0.16)' }}
             >
               <HStack justify="space-between">
-                <Text fontSize="2xl" fontWeight="900" color="warm.orange">
+                {/* <Text fontSize="2xl" fontWeight="900" color="warm.orange">
                   {index + 1}
-                </Text>
+                </Text> */}
                 <Icon as={item.icon} boxSize={9} color={index % 2 ? 'warm.green' : 'warm.sky'} />
               </HStack>
               <Text mt="auto" fontWeight="900" color="warm.ink" lineHeight="1.65" textAlign="center">

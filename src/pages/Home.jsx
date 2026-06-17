@@ -34,25 +34,19 @@ export default function Home() {
     <Box>
       <Hero />
 
-      <Container maxW="1448px" py={{ base: 10, md: 14 }} px={{ base: 4, md: 8 }}>
-        <HStack justify="space-between" mb={7} flexWrap="wrap" gap={3}>
+      <Container maxW="1280px" py={{ base: 6, md: 4 }} px={{ base: 4, md: 8 }}>
+        <HStack justify="space-between" align="start" mb={5} flexWrap="wrap" gap={3}>
           <Box>
-            <Text fontSize={{ base: '3xl', md: '4xl' }} fontWeight="900" color="warm.brown">
+            <Text fontSize={{ base: 'xl', md: '3xl' }} fontWeight="900" color="warm.brown">
               精選待認養毛孩
             </Text>
-            <Text color="gray.700" fontWeight="700">
-              這裡顯示最新毛孩
-            </Text>
           </Box>
-          <Button as={Link} to="/animals" bg="warm.orange" color="white" size="lg">
-            查看所有毛孩
-          </Button>
         </HStack>
 
         {loading ? (
           <EmptyState text="正在從 Odoo 載入毛孩資料..." />
         ) : featuredAnimals.length ? (
-          <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={{ base: 5, lg: 6 }}>
+          <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={{ base: 4, lg: 5 }} alignItems="start">
             {featuredAnimals.map((animal) => (
               <AnimalCard key={animal.id} animal={animal} onAdopt={handleAdopt} />
             ))}
@@ -97,7 +91,7 @@ function Hero() {
           src={`${heroImage}?v=20260617-hero-2`}
           alt="暖心毛孩認養主視覺"
           w="100%"
-          maxW="1448px"
+          maxW="1280px"
           mx="auto"
           display="block"
           objectFit="contain"

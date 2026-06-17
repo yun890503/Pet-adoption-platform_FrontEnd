@@ -1,42 +1,175 @@
-import { Box, Container, Heading, SimpleGrid, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  IconButton,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Select,
+  SimpleGrid,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaGrip, FaList, FaMagnifyingGlass } from 'react-icons/fa6';
 import AnimalCard from '../components/AnimalCard.jsx';
+import MemberLayout from '../components/MemberLayout.jsx';
 import { odooApi } from '../services/odooApi.js';
-import { getFavorites } from '../utils/storage.js';
+import { getUser, saveUser } from '../utils/storage.js';
+
+const text = {
+  searchPlaceholder: '\u641c\u5c0b\u6bdb\u5b69\u540d\u7a31\u6216\u54c1\u7a2e',
+  allTypes: '\u5168\u90e8\u7a2e\u985e',
+  dog: '\u72d7\u72d7',
+  cat: '\u8c93\u54aa',
+  newest: '\u6700\u65b0\u52a0\u5165',
+  age: '\u5e74\u9f61\u6392\u5e8f',
+  breed: '\u54c1\u7a2e\u6392\u5e8f',
+  gridView: '\u5361\u7247\u6aa2\u8996',
+  listView: '\u6e05\u55ae\u6aa2\u8996',
+  loginFirst: '\u8acb\u5148\u767b\u5165\u6703\u54e1\uff0c\u6536\u85cf\u8cc7\u6599\u6703\u5132\u5b58\u5728 Odoo \u5f8c\u7aef\u3002',
+  loginAction: '\u524d\u5f80\u767b\u5165',
+  loading: '\u6b63\u5728\u5f9e Odoo \u8b80\u53d6\u6536\u85cf\u8cc7\u6599...',
+  empty: '\u76ee\u524d\u9084\u6c92\u6709\u6536\u85cf\u6bdb\u5b69\u3002',
+  browse: '\u53bb\u770b\u770b\u6bdb\u5b69',
+  failed: '\u8b80\u53d6\u6536\u85cf\u5931\u6557',
+};
+
+function getLoggedInUser() {
+  const user = getUser();
+  return user?.token ? user : null;
+}
+
+function toFavoriteList(value) {
+  return Array.isArray(value) ? value : [];
+}
 
 export default function Favorites() {
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [user, setUser] = useState(() => getLoggedInUser());
   const [favorites, setFavorites] = useState([]);
+  const [query, setQuery] = useState('');
+  const [type, setType] = useState('all');
+  const [sort, setSort] = useState('newest');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const favoriteIds = getFavorites();
-    odooApi
-      .getAnimals()
-      .then((animals) => setFavorites((animals || []).filter((animal) => favoriteIds.includes(animal.id))))
-      .catch(() => setFavorites([]))
-      .finally(() => setLoading(false));
+    const syncUser = (event) => {
+      const nextUser = getLoggedInUser();
+      setUser(nextUser);
+      const favoriteIds = event.detail?.favorites;
+      if (Array.isArray(favoriteIds)) {
+        setFavorites((items) => items.filter((animal) => favoriteIds.includes(animal.id)));
+      }
+    };
+    window.addEventListener('warm-paws:user-changed', syncUser);
+    window.addEventListener('storage', syncUser);
+    return () => {
+      window.removeEventListener('warm-paws:user-changed', syncUser);
+      window.removeEventListener('storage', syncUser);
+    };
   }, []);
 
+  useEffect(() => {
+    if (!user?.token) {
+      setFavorites([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    odooApi
+      .getMyFavorites()
+      .then((items) => {
+        const nextItems = toFavoriteList(items);
+        setFavorites(nextItems);
+        saveUser({ ...user, favorites: nextItems.map((item) => item.id) });
+      })
+      .catch((error) => {
+        toast({
+          title: text.failed,
+          description: error.message,
+          status: 'error',
+        });
+      })
+      .finally(() => setLoading(false));
+  }, [toast, user?.token]);
+
+  const filtered = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    const nextItems = toFavoriteList(favorites).filter((animal) => {
+      const matchesType = type === 'all' || animal.type === type;
+      const haystack = `${animal.name || ''} ${animal.breed || ''}`.toLowerCase();
+      return matchesType && haystack.includes(normalizedQuery);
+    });
+
+    return [...nextItems].sort((a, b) => {
+      if (sort === 'age') return (a.ageValue || 999) - (b.ageValue || 999);
+      if (sort === 'breed') return `${a.breed || ''}`.localeCompare(`${b.breed || ''}`, 'zh-Hant');
+      return (b.id || 0) - (a.id || 0);
+    });
+  }, [favorites, query, sort, type]);
+
   return (
-    <Box>
-      <Container maxW="1448px" py={12} px={{ base: 4, md: 8 }}>
-        <Heading color="warm.brown" mb={8}>
-          我的收藏
-        </Heading>
-        {loading ? (
-          <Text fontSize="xl" fontWeight="800">正在從 Odoo 載入收藏毛孩...</Text>
-        ) : favorites.length ? (
-          <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={6}>
-            {favorites.map((animal) => (
-              <AnimalCard key={animal.id} animal={animal} onAdopt={() => {}} />
-            ))}
-          </SimpleGrid>
-        ) : (
-          <Text fontSize="xl" fontWeight="800">
-            目前還沒有收藏 Odoo 上架的狗狗貓咪。
-          </Text>
-        )}
-      </Container>
+    <MemberLayout active="/favorites">
+      <Flex bg="rgba(255,255,255,0.94)" rounded="2xl" p={4} border="1px solid" borderColor="orange.100" boxShadow="md" gap={3} flexWrap="wrap" mb={5}>
+        <InputGroup maxW={{ base: '100%', md: '330px' }}>
+          <InputLeftElement pointerEvents="none">
+            <FaMagnifyingGlass color="#a0aec0" />
+          </InputLeftElement>
+          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={text.searchPlaceholder} rounded="lg" />
+        </InputGroup>
+
+        <Select value={type} onChange={(event) => setType(event.target.value)} maxW={{ base: '100%', md: '180px' }} rounded="lg">
+          <option value="all">{text.allTypes}</option>
+          <option value="dog">{text.dog}</option>
+          <option value="cat">{text.cat}</option>
+        </Select>
+
+        <Select value={sort} onChange={(event) => setSort(event.target.value)} maxW={{ base: '100%', md: '180px' }} rounded="lg">
+          <option value="newest">{text.newest}</option>
+          <option value="age">{text.age}</option>
+          <option value="breed">{text.breed}</option>
+        </Select>
+
+        <HStack ml={{ md: 'auto' }}>
+          <IconButton aria-label={text.gridView} icon={<FaGrip />} bg="orange.50" color="warm.brown" />
+          <IconButton aria-label={text.listView} icon={<FaList />} variant="outline" />
+        </HStack>
+      </Flex>
+
+      {!user?.token ? (
+        <EmptyState text={text.loginFirst} action={text.loginAction} onClick={() => navigate('/login')} />
+      ) : loading ? (
+        <EmptyState text={text.loading} />
+      ) : filtered.length ? (
+        <SimpleGrid columns={{ base: 1, sm: 2, xl: 4 }} spacing={{ base: 4, md: 5 }} alignItems="start">
+          {filtered.map((animal) => (
+            <AnimalCard key={animal.id} animal={animal} />
+          ))}
+        </SimpleGrid>
+      ) : (
+        <EmptyState text={text.empty} action={text.browse} onClick={() => navigate('/animals')} />
+      )}
+    </MemberLayout>
+  );
+}
+
+function EmptyState({ text: message, action, onClick }) {
+  return (
+    <Box bg="white" rounded="2xl" p={8} textAlign="center" border="1px solid" borderColor="orange.100" boxShadow="md">
+      <Text fontWeight="900" color="warm.brown" fontSize="lg">
+        {message}
+      </Text>
+      {action && (
+        <Button mt={4} bg="warm.orange" color="white" onClick={onClick}>
+          {action}
+        </Button>
+      )}
     </Box>
   );
 }

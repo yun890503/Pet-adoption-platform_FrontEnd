@@ -2,7 +2,7 @@ import { Box, Button, Container, FormControl, FormLabel, Heading, Input, Select,
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { odooApi } from '../services/odooApi.js';
-import { saveApplication } from '../utils/storage.js';
+import { getUser } from '../utils/storage.js';
 
 export default function AdoptionApply() {
   const { id } = useParams();
@@ -16,6 +16,12 @@ export default function AdoptionApply() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!getUser()?.token) {
+      toast({ title: '請先登入會員', description: '登入後才能送出認養申請。', status: 'warning' });
+      navigate('/login');
+      return;
+    }
+
     const form = new FormData(event.currentTarget);
     const payload = {
       animalId: Number(id),
@@ -29,10 +35,9 @@ export default function AdoptionApply() {
       otherPets: form.get('otherPets'),
     };
 
-    await odooApi.createAdoptionInquiry(payload);
-    saveApplication(payload);
-    toast({ title: '申請已送出', description: '資料已送到 Odoo 後台。', status: 'success' });
-    navigate('/profile');
+    await odooApi.createAdoptionApplication(payload);
+    toast({ title: '申請已送出', description: '已建立 Odoo 銷售報價單，狀態為審核中。', status: 'success' });
+    navigate('/profile/applications');
   };
 
   return (
