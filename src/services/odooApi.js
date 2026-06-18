@@ -1,4 +1,10 @@
-const DEFAULT_BASE = 'http://localhost:8069/warm_paws/api';
+const LOCAL_BASE = 'http://localhost:8069/warm_paws/api';
+const ZEABUR_BASE = 'https://heartwarming.zeabur.app/warm_paws/api';
+
+const DEFAULT_BASE =
+  typeof window !== 'undefined' && window.location.hostname.endsWith('zeabur.app')
+    ? ZEABUR_BASE
+    : LOCAL_BASE;
 
 export const ODOO_API_BASE = import.meta.env.VITE_ODOO_API_BASE || DEFAULT_BASE;
 
