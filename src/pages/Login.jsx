@@ -20,11 +20,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaFacebookF, FaGoogle, FaLine, FaLock, FaPaw, FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import authBg from '../../image/179a3ea4-9650-4a88-899a-e9577b965c72.png';
 import { odooApi } from '../services/odooApi.js';
+import { getLineLoginPayload } from '../services/lineAuth.js';
 import { clearUser, saveUser } from '../utils/storage.js';
 
 export default function Login() {
   const navigate = useNavigate();
   const toast = useToast();
+  const [lineLoading, setLineLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -35,18 +37,37 @@ export default function Login() {
     try {
       const user = await odooApi.login({ login: email, email, password });
       saveUser(user);
+      toast({ title: '登入成功', status: 'success' });
+      navigate('/profile');
     } catch (error) {
       clearUser();
       toast({
         title: '登入失敗',
-        description: error.message || '請確認 Email 與密碼是否正確',
+        description: error.message || '請確認 Email 與密碼是否正確。',
         status: 'error',
       });
-      return;
     }
+  };
 
-    toast({ title: '登入成功', status: 'success' });
-    navigate('/profile');
+  const handleLineLogin = async () => {
+    setLineLoading(true);
+    try {
+      const payload = await getLineLoginPayload();
+      if (!payload) return;
+      const user = await odooApi.lineLogin(payload);
+      saveUser(user);
+      toast({ title: 'LINE 登入成功', status: 'success' });
+      navigate('/profile');
+    } catch (error) {
+      clearUser();
+      toast({
+        title: 'LINE 登入失敗',
+        description: error.message || '請稍後再試，或改用 Email 登入。',
+        status: 'error',
+      });
+    } finally {
+      setLineLoading(false);
+    }
   };
 
   return (
@@ -58,6 +79,9 @@ export default function Login() {
             <Heading as="h1" fontSize={{ base: '2xl', md: '3xl' }} color="warm.brown" letterSpacing="0" lineHeight="1.1">
               會員登入
             </Heading>
+            <Text mt={2} color="warm.brown" fontSize="sm">
+              歡迎回來，一起延續愛的旅程
+            </Text>
           </Box>
 
           <AuthInput name="email" type="email" icon={FaEnvelope} placeholder="Gmail / Email" />
@@ -75,11 +99,11 @@ export default function Login() {
 
           <OrangeButton type="submit">登入</OrangeButton>
 
-          <DividerText>其他帳號以下方登入</DividerText>
-          <SocialButtons />
+          <DividerText>或使用以下方式登入</DividerText>
+          <SocialButtons onLineClick={handleLineLogin} lineLoading={lineLoading} />
 
           <Text pt={2} color="warm.brown" fontSize="sm" fontWeight="700">
-            還沒有帳號？
+            還不是會員？
             <ChakraLink as={Link} to="/register" color="warm.orangeDark" ml={1} fontWeight="900">
               立即註冊
             </ChakraLink>
@@ -144,7 +168,7 @@ function PawPet({ color, label }) {
   return (
     <FlexPet color={color}>
       <Text as="span" fontSize="19px" lineHeight="1">
-        {label === '狗狗' ? '🐶' : '🐱'}
+        {label === '狗狗' ? '狗' : '貓'}
       </Text>
     </FlexPet>
   );
@@ -250,11 +274,22 @@ export function DividerText({ children }) {
   );
 }
 
-export function SocialButtons() {
+export function SocialButtons({ onLineClick, lineLoading = false } = {}) {
   return (
     <HStack spacing={5} pt={0}>
       <IconButton aria-label="Facebook 登入" icon={<FaFacebookF />} boxSize="42px" rounded="full" bg="#2f6fb8" color="white" fontSize="lg" _hover={{ bg: '#245d9d' }} />
-      <IconButton aria-label="Line 登入" icon={<FaLine />} boxSize="42px" rounded="full" bg="#35a66c" color="white" fontSize="lg" _hover={{ bg: '#2f925f' }} />
+      <IconButton
+        aria-label="LINE 登入"
+        icon={<FaLine />}
+        boxSize="42px"
+        rounded="full"
+        bg="#35a66c"
+        color="white"
+        fontSize="lg"
+        isLoading={lineLoading}
+        onClick={onLineClick}
+        _hover={{ bg: '#2f925f' }}
+      />
       <IconButton aria-label="Google 登入" icon={<FaGoogle />} boxSize="42px" rounded="full" bg="#ef4444" color="white" fontSize="lg" _hover={{ bg: '#dc2626' }} />
     </HStack>
   );

@@ -36,17 +36,15 @@ export default function Register() {
     try {
       const user = await odooApi.register(payload);
       saveUser(user);
+      toast({ title: '註冊成功', status: 'success' });
+      navigate('/profile');
     } catch (error) {
       toast({
         title: '註冊失敗',
-        description: error.message || '請稍後再試',
+        description: error.message || '請確認資料後再試一次。',
         status: 'error',
       });
-      return;
     }
-
-    toast({ title: '註冊成功', status: 'success' });
-    navigate('/profile');
   };
 
   return (
@@ -58,11 +56,14 @@ export default function Register() {
             <Heading as="h1" fontSize={{ base: '3xl', md: '4xl' }} color="warm.brown" letterSpacing="0">
               會員註冊
             </Heading>
+            <Text color="warm.brown" fontSize="sm">
+              加入我們，一起給毛孩一個溫暖的家
+            </Text>
           </VStack>
 
           <Field name="name" label="姓名" icon={FaRegUser} placeholder="請輸入姓名" />
           <Field name="email" label="電子郵件" icon={FaEnvelope} type="email" placeholder="請輸入電子郵件" />
-          <Field name="password" label="密碼" helper="至少 8 個字元，包含英文與數字">
+          <Field name="password" label="密碼" helper="至少 8 個字元，建議包含英文與數字">
             <PasswordInput name="password" placeholder="請輸入密碼" />
           </Field>
           <Field name="confirmPassword" label="確認密碼">

@@ -106,6 +106,12 @@ export const odooApi = {
       body: JSON.stringify(payload),
     });
   },
+  lineLogin(payload) {
+    return request('/line-login', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
   getMe() {
     return request('/me');
   },
