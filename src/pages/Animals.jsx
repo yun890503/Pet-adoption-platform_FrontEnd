@@ -90,6 +90,7 @@ export default function Animals() {
           type: type === 'all' ? undefined : type,
           search: keyword,
           sort,
+          imageMode: 'cover',
         })
         .then((data) => setList(Array.isArray(data) ? data : []))
         .catch(() => setList([]))

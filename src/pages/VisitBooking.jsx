@@ -98,7 +98,7 @@ export default function VisitBooking() {
   const [cancellingId, setCancellingId] = useState(null);
 
   useEffect(() => {
-    odooApi.getAnimals({ limit: 20, sort: 'newest' }).then((items) => setAnimals(Array.isArray(items) ? items : [])).catch(() => setAnimals([]));
+    odooApi.getAnimals({ limit: 20, sort: 'newest', imageMode: 'cover' }).then((items) => setAnimals(Array.isArray(items) ? items : [])).catch(() => setAnimals([]));
     odooApi
       .getMyAdoptionApplications()
       .then((items) => {

@@ -26,6 +26,8 @@ export default function AnimalCarousel({ images, name, compact = false, height }
         w="100%"
         h="100%"
         objectFit="cover"
+        loading="lazy"
+        decoding="async"
         transition="transform 0.35s ease"
         _groupHover={{ transform: 'scale(1.04)' }}
       />

@@ -64,7 +64,7 @@ export default function ProfileApplications() {
     if (!isOpen || animals.length) return;
     setAnimalsLoading(true);
     odooApi
-      .getAnimals({ limit: 30, sort: 'newest' })
+      .getAnimals({ limit: 30, sort: 'newest', imageMode: 'cover' })
       .then((items) => setAnimals(Array.isArray(items) ? items : []))
       .catch(() => setAnimals([]))
       .finally(() => setAnimalsLoading(false));

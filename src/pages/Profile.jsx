@@ -43,7 +43,7 @@ export default function Profile() {
   const favoriteIds = user?.favorites || [];
 
   useEffect(() => {
-    odooApi.getAnimals({ limit: 12, sort: 'newest' }).then(setAnimals).catch(() => setAnimals([]));
+    odooApi.getAnimals({ limit: 12, sort: 'newest', imageMode: 'cover' }).then(setAnimals).catch(() => setAnimals([]));
     odooApi.getMyAdoptionApplications().then((items) => setApplications(Array.isArray(items) ? items : [])).catch(() => setApplications([]));
     odooApi.getMyAdoptionRecords().then((items) => setRecords(Array.isArray(items) ? items : [])).catch(() => setRecords([]));
     odooApi.getMyVisitAppointments().then((items) => setVisits(Array.isArray(items) ? items : [])).catch(() => setVisits([]));

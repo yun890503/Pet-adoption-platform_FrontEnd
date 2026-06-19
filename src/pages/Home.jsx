@@ -19,7 +19,7 @@ export default function Home() {
   useEffect(() => {
     setLoading(true);
     odooApi
-      .getAnimals({ limit: 8, sort: 'newest' })
+      .getAnimals({ limit: 8, sort: 'newest', imageMode: 'cover' })
       .then((data) => setFeaturedAnimals(Array.isArray(data) ? data : []))
       .catch(() => setFeaturedAnimals([]))
       .finally(() => setLoading(false));
