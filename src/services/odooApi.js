@@ -43,6 +43,16 @@ function query(params) {
   return value ? `?${value}` : '';
 }
 
+function favoriteIds(data) {
+  if (Array.isArray(data)) {
+    return data.map((item) => (typeof item === 'object' ? item.id : item)).filter(Boolean);
+  }
+  if (Array.isArray(data?.favorites)) {
+    return data.favorites.filter(Boolean);
+  }
+  return [];
+}
+
 export const odooApi = {
   getAnimals(params) {
     return request(`/animals${query(params)}`);
@@ -138,17 +148,19 @@ export const odooApi = {
   getMyFavorites() {
     return request('/me/favorites');
   },
-  toggleMyFavorite(animalId) {
-    return request('/me/favorites', {
+  async toggleMyFavorite(animalId) {
+    const data = await request('/me/favorites', {
       method: 'POST',
       body: JSON.stringify({ animalId }),
     });
+    return favoriteIds(data);
   },
-  toggleFavorite(memberId, animalId) {
-    return request(`/members/${memberId}/favorites`, {
+  async toggleFavorite(memberId, animalId) {
+    const data = await request(`/members/${memberId}/favorites`, {
       method: 'POST',
       body: JSON.stringify({ animalId }),
     });
+    return favoriteIds(data);
   },
   getFavorites(memberId) {
     return request(`/members/${memberId}/favorites`);

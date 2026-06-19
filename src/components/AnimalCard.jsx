@@ -55,8 +55,7 @@ export default function AnimalCard({ animal }) {
     }
 
     try {
-      const favorites = await odooApi.toggleMyFavorite(animal.id);
-      const nextIds = Array.isArray(favorites) ? favorites.map((item) => item.id) : [];
+      const nextIds = await odooApi.toggleMyFavorite(animal.id);
       setFavoriteIds(nextIds);
       saveUser({ ...user, favorites: nextIds });
       toast({ title: nextIds.includes(animal.id) ? text.added : text.removed, status: 'success', duration: 1400 });

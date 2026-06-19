@@ -132,8 +132,7 @@ export default function AnimalDetail() {
 
     setFavoriteLoading(true);
     try {
-      const result = await odooApi.toggleMyFavorite(animal.id);
-      const nextIds = Array.isArray(result) ? result.map((item) => item.id) : [];
+      const nextIds = await odooApi.toggleMyFavorite(animal.id);
       setFavorites(nextIds);
       saveUser({ ...user, favorites: nextIds });
       toast({
