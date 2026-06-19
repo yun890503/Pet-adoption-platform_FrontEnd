@@ -88,6 +88,15 @@ export const odooApi = {
       body: JSON.stringify(payload),
     });
   },
+  getVolunteerTestimonials(params) {
+    return request(`/volunteer-testimonials${query(params)}`);
+  },
+  createVolunteerTestimonial(payload) {
+    return request('/volunteer-testimonials', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
   createContactMessage(payload) {
     return request('/contact-messages', {
       method: 'POST',

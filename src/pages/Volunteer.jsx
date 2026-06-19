@@ -17,9 +17,12 @@ import {
   ModalOverlay,
   SimpleGrid,
   Text,
+  Textarea,
   VStack,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   FaCameraRetro,
   FaCat,
@@ -29,13 +32,16 @@ import {
   FaHeart,
   FaHouse,
   FaPaw,
-  FaPeopleCarryBox,
+  FaPaperPlane,
+  FaPenToSquare,
   FaPhone,
   FaRegClock,
   FaStar,
 } from 'react-icons/fa6';
 import { GiPartyPopper } from 'react-icons/gi';
 import volunteerHero from '../../image/feb89baf-9e79-4e32-85b8-dc10210384f0.png?url';
+import { odooApi } from '../services/odooApi.js';
+import { getUser } from '../utils/storage.js';
 
 const volunteerTypes = [
   {
@@ -54,59 +60,114 @@ const volunteerTypes = [
     title: '攝影與社群志工',
     icon: FaCameraRetro,
     image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=520&q=80',
-    text: '拍攝日常照片，讓更多人看見毛孩的可愛。',
+    text: '拍攝毛孩日常照片，讓更多人看見牠們的可愛。',
   },
   {
     title: '活動支援志工',
     icon: GiPartyPopper,
     image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=520&q=80',
-    text: '協助認養活動、物資整理與現場接待。',
+    text: '協助認養活動、物資整理與現場接待流程。',
   },
 ];
 
-const conditions = ['年滿 16 歲以上', '喜歡動物、有耐心', '願意遵守中心安全規範', '可配合培訓與排班'];
+const conditions = ['年滿 16 歲以上', '喜歡動物、有耐心', '願意遵守中心安全規範', '可配合排班與時段'];
 
 const dayItems = [
   {
-    title: '陪伴散步、牽繩互動',
+    title: '陪伴散步，增加互動',
     image: 'https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?auto=format&fit=crop&w=640&q=80',
   },
   {
-    title: '清潔環境、整理用品',
+    title: '清潔環境，細心照顧',
     image: 'https://images.unsplash.com/photo-1601758177266-bc599de87707?auto=format&fit=crop&w=640&q=80',
   },
   {
-    title: '整理物資、補充飼料',
+    title: '整理場地，維護環境',
     image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=640&q=80',
   },
   {
-    title: '學習照護、陪伴互動',
+    title: '參與認養會，推廣送養',
     image: 'https://images.unsplash.com/photo-1558788353-f76d92427f16?auto=format&fit=crop&w=640&q=80',
   },
 ];
 
 const rewards = [
-  '與毛孩相處會療癒你，也讓牠更安心。',
-  '參與專業照護與基本行為陪伴訓練。',
-  '認識一群同樣喜歡動物的溫柔夥伴。',
-  '累積公益服務經驗，留下真實改變。',
+  '與毛孩相處的療癒時光，每次服務都能感受牠們的進步。',
+  '免費專業課程與培訓，提供動物照護與行為觀察知識。',
+  '認識一群愛動物的朋友，和志同道合的夥伴一起做有意義的事。',
+  '志工服務時數證明，累積你的愛心足跡。',
+  '志工專屬活動與聚會，定期分享經驗與交流。',
 ];
 
-const feedback = [
+const fallbackFeedback = [
   {
-    name: '小安｜散步志工',
-    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=240&q=80',
-    text: '原本只是想幫忙，後來發現每一次散步都讓我更期待週末。',
+    id: 'fallback-1',
+    name: '小安',
+    role: '散步志工',
+    rating: 5,
+    message: '原本只是想幫忙，後來發現每一次散步都讓我更期待週末。',
   },
   {
-    name: '宇庭｜活動志工',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=240&q=80',
-    text: '看見毛孩被認養的那一刻，真的覺得所有準備都值得。',
+    id: 'fallback-2',
+    name: '宇庭',
+    role: '活動志工',
+    rating: 5,
+    message: '看見毛孩被認養的那一刻，真的覺得所有準備都值得。',
   },
 ];
 
 export default function Volunteer() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const feedbackModal = useDisclosure();
+  const toast = useToast();
+  const [feedback, setFeedback] = useState(fallbackFeedback);
+  const [message, setMessage] = useState('');
+  const [rating, setRating] = useState(5);
+  const [submitting, setSubmitting] = useState(false);
+  const user = useMemo(() => getUser(), []);
+
+  useEffect(() => {
+    let mounted = true;
+    odooApi
+      .getVolunteerTestimonials({ limit: 20 })
+      .then((items) => {
+        if (mounted && Array.isArray(items) && items.length) setFeedback(items);
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const submitFeedback = async () => {
+    const text = message.trim();
+    if (!user?.token) {
+      toast({ title: '請先登入會員', description: '登入後就能分享你的志工心得。', status: 'warning' });
+      return;
+    }
+    if (!text) {
+      toast({ title: '請輸入心得內容', status: 'warning' });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const created = await odooApi.createVolunteerTestimonial({
+        message: text.slice(0, 300),
+        rating,
+        role: '暖心志工',
+      });
+      setFeedback((items) => [created, ...items]);
+      setMessage('');
+      setRating(5);
+      feedbackModal.onClose();
+      toast({ title: '心得已送出', status: 'success' });
+    } catch (error) {
+      toast({ title: '送出心得失敗', description: error.message, status: 'error' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <Box bg="linear-gradient(180deg, #fff8ea 0%, #fffaf3 56%, #fff1d8 100%)" minH="100vh">
@@ -141,7 +202,7 @@ export default function Volunteer() {
                   {rewards.map((item) => (
                     <HStack key={item} align="start" spacing={3}>
                       <Icon as={FaGift} color="warm.orange" mt={1} />
-                      <Text color="warm.ink" fontWeight="700" lineHeight="1.7">
+                      <Text color="warm.ink" fontWeight="700" lineHeight="1.7" fontSize={{ base: 'sm', md: 'md' }}>
                         {item}
                       </Text>
                     </HStack>
@@ -152,8 +213,11 @@ export default function Volunteer() {
               <InfoPanel title="志工心得" icon={FaStar}>
                 <VStack align="stretch" spacing={4}>
                   {feedback.map((item) => (
-                    <FeedbackCard key={item.name} item={item} />
+                    <FeedbackCard key={item.id} item={item} />
                   ))}
+                  <Button leftIcon={<FaPenToSquare />} variant="outline" colorScheme="orange" rounded="full" onClick={feedbackModal.onOpen}>
+                    分享你的心得
+                  </Button>
                 </VStack>
               </InfoPanel>
             </Grid>
@@ -164,6 +228,16 @@ export default function Volunteer() {
       </Container>
 
       <VolunteerModal isOpen={isOpen} onClose={onClose} />
+      <FeedbackModal
+        isOpen={feedbackModal.isOpen}
+        onClose={feedbackModal.onClose}
+        message={message}
+        rating={rating}
+        submitting={submitting}
+        onMessageChange={setMessage}
+        onRatingChange={setRating}
+        onSubmit={submitFeedback}
+      />
     </Box>
   );
 }
@@ -239,7 +313,7 @@ function ConditionCard() {
           志工條件
         </Heading>
       </HStack>
-      <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={3}>
+      <SimpleGrid columns={{ base: 1, sm: 2, lg: 1 }} spacing={3}>
         {conditions.map((item) => (
           <HStack key={item} bg="green.50" rounded="12px" px={4} py={3}>
             <Icon as={FaPaw} color="warm.green" />
@@ -279,23 +353,88 @@ function InfoPanel({ title, icon, children }) {
 }
 
 function FeedbackCard({ item }) {
+  const rating = Math.max(1, Math.min(5, Number(item.rating) || 5));
   return (
     <HStack align="start" bg="warm.cream" rounded="16px" p={3} spacing={3}>
-      <Image src={item.image} alt={item.name} boxSize="54px" rounded="full" objectFit="cover" />
+      <DefaultAvatar />
       <Box>
         <HStack color="orange.400" spacing={1}>
           {Array.from({ length: 5 }).map((_, index) => (
-            <Icon key={index} as={FaStar} boxSize={3} />
+            <Icon key={index} as={FaStar} boxSize={3.5} opacity={index < rating ? 1 : 0.25} />
           ))}
         </HStack>
         <Text mt={1} color="warm.brown" fontWeight="900" fontSize="sm">
-          {item.name}
+          {item.name} ｜ {item.role || '暖心志工'}
         </Text>
-        <Text color="gray.700" fontSize="sm" lineHeight="1.6">
-          {item.text}
+        <Text color="gray.700" fontSize="sm" lineHeight="1.7">
+          {item.message}
         </Text>
       </Box>
     </HStack>
+  );
+}
+
+function FeedbackModal({ isOpen, onClose, message, rating, submitting, onMessageChange, onRatingChange, onSubmit }) {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size={{ base: 'sm', md: 'lg' }}>
+      <ModalOverlay bg="blackAlpha.500" backdropFilter="blur(4px)" />
+      <ModalContent rounded="24px" bg="white" border="1px solid" borderColor="orange.100">
+        <ModalHeader color="warm.brown">
+          <HStack>
+            <Icon as={FaPenToSquare} color="warm.orange" />
+            <Text>分享你的心得</Text>
+          </HStack>
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody pb={6}>
+          <Text mb={3} color="gray.600" fontSize="sm" fontWeight="700">
+            你的分享能鼓勵更多志工一起參與。
+          </Text>
+          <Box position="relative">
+            <Textarea
+              value={message}
+              onChange={(event) => onMessageChange(event.target.value.slice(0, 300))}
+              placeholder="請分享你的志工體驗、感受或收穫..."
+              minH="170px"
+              resize="vertical"
+              rounded="14px"
+              borderColor="orange.200"
+              _focus={{ borderColor: 'warm.orange', boxShadow: '0 0 0 1px #ff8a3d' }}
+            />
+            <Text position="absolute" right="12px" bottom="8px" color="gray.500" fontWeight="800" fontSize="sm">
+              {message.length}/300
+            </Text>
+          </Box>
+          <Text mt={4} mb={2} color="warm.brown" fontWeight="900">
+            這次服務的整體滿意度
+          </Text>
+          <HStack spacing={2} mb={5} flexWrap="wrap">
+            {Array.from({ length: 5 }).map((_, index) => {
+              const value = index + 1;
+              return (
+                <Button key={value} variant="ghost" minW="36px" h="36px" p={0} color={value <= rating ? 'warm.orange' : 'orange.200'} onClick={() => onRatingChange(value)} _hover={{ bg: 'orange.50' }}>
+                  <Icon as={FaStar} boxSize={7} />
+                </Button>
+              );
+            })}
+            <Text color="gray.500" fontSize="sm">
+              點擊星星評分
+            </Text>
+          </HStack>
+          <Button leftIcon={<FaPaperPlane />} w="100%" bg="warm.orange" color="white" isLoading={submitting} onClick={onSubmit}>
+            送出心得
+          </Button>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+}
+
+function DefaultAvatar() {
+  return (
+    <Flex align="center" justify="center" boxSize="58px" rounded="full" bg="gray.200" color="gray.500" flexShrink={0}>
+      <Icon as={FaPaw} boxSize={6} />
+    </Flex>
   );
 }
 
@@ -311,7 +450,7 @@ function BottomCta({ onOpen }) {
             每一份愛心，都能改變牠們的未來
           </Heading>
           <Text mt={1} color="warm.ink" fontWeight="700">
-            加入志工團隊，一起讓浪浪得到安穩陪伴。
+            加入志工團隊，一起讓浪浪的明天更美好。
           </Text>
         </Box>
       </HStack>
@@ -334,12 +473,12 @@ function VolunteerModal({ isOpen, onClose }) {
         <ModalBody pb={7}>
           <VStack align="stretch" spacing={4}>
             <Text color="warm.ink" fontWeight="700" lineHeight="1.8">
-              歡迎先與我們聯繫，我們會協助你了解志工內容、培訓方式與適合的排班時段。
+              歡迎先與我們聯繫，志工夥伴會協助你了解服務內容、排班方式與安全規範。
             </Text>
             <ContactLine icon={FaPhone} text="04-1234-5678" />
             <ContactLine icon={FaEnvelope} text="adopt@warm-paws.com" />
             <ContactLine icon={FaHouse} text="台中市毛孩路 88 號" />
-            <ContactLine icon={FaRegClock} text="週一至週日 10:00–18:00" />
+            <ContactLine icon={FaRegClock} text="週一至週日 10:00-18:00" />
           </VStack>
         </ModalBody>
       </ModalContent>

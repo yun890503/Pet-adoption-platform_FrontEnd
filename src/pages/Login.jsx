@@ -38,7 +38,7 @@ export default function Login() {
       const user = await odooApi.login({ login: email, email, password });
       saveUser(user);
       toast({ title: '登入成功', status: 'success' });
-      navigate('/profile');
+      navigate('/');
     } catch (error) {
       clearUser();
       toast({
@@ -57,7 +57,7 @@ export default function Login() {
       const user = await odooApi.lineLogin(payload);
       saveUser(user);
       toast({ title: 'LINE 登入成功', status: 'success' });
-      navigate('/profile');
+      navigate('/');
     } catch (error) {
       clearUser();
       toast({

@@ -106,6 +106,7 @@ export default function Navbar() {
           </DrawerHeader>
           <DrawerBody>
             <VStack as="nav" align="stretch" spacing={3}>
+              <MobileMemberSection onClose={onClose} />
               {links.map((link) => (
                 <Button
                   key={link.to}
@@ -124,7 +125,6 @@ export default function Navbar() {
                   {link.label}
                 </Button>
               ))}
-              <MobileMemberSection onClose={onClose} />
             </VStack>
           </DrawerBody>
         </DrawerContent>
