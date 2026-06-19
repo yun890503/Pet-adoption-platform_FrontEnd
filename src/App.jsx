@@ -2,6 +2,7 @@ import { Box } from '@chakra-ui/react';
 import { Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
+import ScrollToTop from './components/ScrollToTop.jsx';
 import Home from './pages/Home.jsx';
 import Volunteer from './pages/Volunteer.jsx';
 import Process from './pages/Process.jsx';
@@ -21,6 +22,7 @@ import AdoptionRecords from './pages/AdoptionRecords.jsx';
 export default function App() {
   return (
     <Box minH="100vh" bg="warm.cream">
+      <ScrollToTop />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
