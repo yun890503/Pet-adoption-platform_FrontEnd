@@ -106,7 +106,7 @@ export default function Profile() {
         <Panel
           title="個人資料"
           action={
-            <Button size="sm" variant="outline" leftIcon={<FaPen />} onClick={() => setEditing((value) => !value)}>
+            <Button size={{ base: 'xs', md: 'sm' }} variant="outline" leftIcon={<FaPen />} onClick={() => setEditing((value) => !value)}>
               {editing ? '取消' : '編輯'}
             </Button>
           }
@@ -114,7 +114,7 @@ export default function Profile() {
           {editing ? (
             <PartnerForm user={user} onSubmit={savePartner} />
           ) : (
-            <HStack spacing={6} align="center">
+            <HStack spacing={{ base: 3, md: 6 }} align="center">
               {/* <Avatar icon={<FaUser />} boxSize="96px" bg="gray.800" color="white" /> */}
               <VStack align="stretch" spacing={3} flex="1">
                 <Info label="姓名" value={user?.name || '尚未登入'} />
@@ -269,9 +269,9 @@ function SummaryCard({ icon, title, value, label }) {
 
 function Panel({ title, children, action, link }) {
   return (
-    <Box bg="rgba(255,255,255,0.94)" rounded="2xl" p={{ base: 5, md: 6 }} border="1px solid" borderColor="orange.100" boxShadow="lg" minH="260px">
-      <Flex justify="space-between" align="center" mb={5}>
-        <Text fontSize="xl" fontWeight="900" color="warm.ink">
+    <Box bg="rgba(255,255,255,0.94)" rounded={{ base: 'xl', md: '2xl' }} p={{ base: 3, md: 6 }} border="1px solid" borderColor="orange.100" boxShadow="lg" minH={{ base: 'auto', md: '260px' }} overflow="hidden">
+      <Flex justify="space-between" align="center" mb={{ base: 3, md: 5 }} gap={2}>
+        <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="900" color="warm.ink">
           {title}
         </Text>
         {action}
@@ -288,11 +288,11 @@ function Panel({ title, children, action, link }) {
 
 function Info({ label, value }) {
   return (
-    <HStack>
-      <Text minW="58px" color="gray.600">
+    <HStack align="start" spacing={{ base: 2, md: 3 }} fontSize={{ base: 'sm', md: 'md' }}>
+      <Text minW={{ base: '44px', md: '58px' }} color="gray.600" flexShrink={0}>
         {label}
       </Text>
-      <Text fontWeight="800" color="warm.ink">
+      <Text fontWeight="800" color="warm.ink" minW={0} wordBreak="break-word" noOfLines={{ base: 2, md: 1 }}>
         {value}
       </Text>
     </HStack>

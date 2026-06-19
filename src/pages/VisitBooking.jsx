@@ -199,10 +199,10 @@ export default function VisitBooking() {
     <MemberLayout active="/profile/appointments">
       <Flex align="center" justify="space-between" gap={3} mb={4} flexWrap="wrap">
         <Box>
-          <Text fontSize={{ base: '2xl', md: '3xl' }} fontWeight="900" color="warm.brown">
+          <Text fontSize={{ base: 'xl', md: '3xl' }} fontWeight="900" color="warm.brown">
             {text.title}
           </Text>
-          <Text mt={1} fontSize="sm" color="warm.ink">
+          <Text mt={1} fontSize={{ base: 'xs', md: 'sm' }} color="warm.ink">
             {text.subtitle}
           </Text>
         </Box>
@@ -218,19 +218,19 @@ export default function VisitBooking() {
         />
       </Flex>
 
-      <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={3} mb={4}>
+      <SimpleGrid columns={{ base: 2, sm: 3 }} spacing={{ base: 2.5, md: 3 }} mb={4}>
         <Stat icon={FaCalendarDays} value={counts.total} label={text.total} color="orange" />
         <Stat icon={FaClock} value={counts.upcoming} label={text.upcoming} color="blue" />
         <Stat icon={FaCalendarCheck} value={counts.completed} label={text.completed} color="green" />
       </SimpleGrid>
 
       <Box bg="white" rounded="2xl" border="1px solid" borderColor="orange.100" boxShadow="lg" overflow="hidden">
-        <Flex p={4} gap={3} align="center" flexWrap="wrap" borderBottom="1px solid" borderColor="orange.100">
-          <HStack flex={{ base: '1 1 100%', md: '0 1 320px' }} bg="white" border="1px solid" borderColor="gray.200" rounded="lg" px={3}>
-            <Icon as={FaMagnifyingGlass} color="gray.400" boxSize={4} />
-            <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={text.search} border="0" fontSize="sm" _focusVisible={{ boxShadow: 'none' }} />
+        <Flex p={{ base: 2.5, md: 4 }} gap={{ base: 2, md: 3 }} align="center" flexWrap="wrap" borderBottom="1px solid" borderColor="orange.100">
+          <HStack flex={{ base: '1 1 100%', md: '0 1 320px' }} bg="white" border="1px solid" borderColor="gray.200" rounded="lg" px={{ base: 2, md: 3 }}>
+            <Icon as={FaMagnifyingGlass} color="gray.400" boxSize={{ base: 3.5, md: 4 }} />
+            <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={text.search} border="0" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }} _focusVisible={{ boxShadow: 'none' }} />
           </HStack>
-          <Select maxW={{ base: '100%', md: '180px' }} rounded="lg" fontSize="sm" ml={{ md: 'auto' }} value={sort} onChange={(event) => setSort(event.target.value)}>
+          <Select maxW={{ base: '100%', md: '180px' }} rounded="lg" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }} ml={{ md: 'auto' }} value={sort} onChange={(event) => setSort(event.target.value)}>
             <option value="newest">{text.newest}</option>
             <option value="oldest">{text.oldest}</option>
           </Select>
@@ -396,8 +396,8 @@ function VisitRow({ appointment, onCancel, cancelling }) {
       <Flex
         role="button"
         tabIndex={0}
-        p={{ base: 4, md: 5 }}
-        gap={4}
+        p={{ base: 3, md: 5 }}
+        gap={{ base: 3, md: 4 }}
         align={{ base: 'stretch', md: 'center' }}
         direction={{ base: 'column', md: 'row' }}
         cursor="pointer"
@@ -408,14 +408,14 @@ function VisitRow({ appointment, onCancel, cancelling }) {
           if (event.key === 'Enter' || event.key === ' ') setSelectedVisit(appointment);
         }}
       >
-        <HStack spacing={4} flex="1" align="start" minW={0}>
-          <Image src={appointment.image} boxSize={{ base: '78px', md: '92px' }} objectFit="cover" rounded="xl" />
+        <HStack spacing={{ base: 2.5, md: 4 }} flex="1" align="start" minW={0}>
+          <Image src={appointment.image} boxSize={{ base: '58px', md: '92px' }} objectFit="cover" rounded="xl" flexShrink={0} />
           <Box minW={0}>
             <HStack spacing={2}>
-              <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="900" color="warm.brown" noOfLines={1}>
+              <Text fontSize={{ base: 'md', md: 'xl' }} fontWeight="900" color="warm.brown" noOfLines={1}>
                 {appointment.animalName}
               </Text>
-              <Badge rounded="full" colorScheme={appointment.isCancelled ? 'gray' : appointment.isPast ? 'green' : 'orange'}>
+              <Badge rounded="full" colorScheme={appointment.isCancelled ? 'gray' : appointment.isPast ? 'green' : 'orange'} fontSize={{ base: '10px', md: 'xs' }}>
                 {appointment.isCancelled ? text.cancelled : appointment.isPast ? text.completed : text.upcoming}
               </Badge>
             </HStack>
@@ -429,7 +429,7 @@ function VisitRow({ appointment, onCancel, cancelling }) {
           </Box>
         </HStack>
 
-        <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={2} flex="1" fontSize="sm">
+        <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 1.5, md: 2 }} flex="1" fontSize={{ base: 'xs', md: 'sm' }}>
           <Detail icon={FaCalendarDays} label={text.date} value={appointment.dateText} />
           <Detail icon={FaClock} label={text.time} value={appointment.timeText} />
           <Detail icon={FaLocationDot} label={text.visitPlace} value={text.placeName} />
@@ -506,15 +506,15 @@ function VisitDetailModal({ appointment, isOpen, onClose, onCancel, cancelling }
 
 function Stat({ icon, value, label, color }) {
   return (
-    <HStack bg="rgba(255,255,255,0.94)" rounded="xl" p={4} border="1px solid" borderColor="orange.100" boxShadow="md" spacing={3}>
-      <Flex boxSize="40px" rounded="xl" align="center" justify="center" bg={`${color}.50`} color={`${color}.500`} flexShrink={0}>
-        <Icon as={icon} boxSize={5} />
+    <HStack bg="rgba(255,255,255,0.94)" rounded="xl" p={{ base: 2, md: 4 }} border="1px solid" borderColor="orange.100" boxShadow="md" spacing={{ base: 2, md: 3 }} minW={0}>
+      <Flex boxSize={{ base: '28px', md: '40px' }} rounded="xl" align="center" justify="center" bg={`${color}.50`} color={`${color}.500`} flexShrink={0}>
+        <Icon as={icon} boxSize={{ base: 3.5, md: 5 }} />
       </Flex>
-      <Box>
-        <Text fontSize="3xl" fontWeight="900" color="warm.brown" lineHeight="1">
+      <Box minW={0}>
+        <Text fontSize={{ base: 'xl', md: '3xl' }} fontWeight="900" color="warm.brown" lineHeight="1" noOfLines={1}>
           {value}
         </Text>
-        <Text fontSize="sm" fontWeight="800" color="warm.ink">
+        <Text fontSize={{ base: '10px', md: 'sm' }} fontWeight="800" color="warm.ink" noOfLines={2}>
           {label}
         </Text>
       </Box>
@@ -526,7 +526,7 @@ function Detail({ icon, label, value }) {
   return (
     <HStack color="warm.ink" spacing={2} minW={0}>
       <Icon as={icon} color="warm.brown" boxSize={3.5} flexShrink={0} />
-      <Text color="gray.600" whiteSpace="nowrap">
+      <Text color="gray.600" whiteSpace="nowrap" flexShrink={0}>
         {label}
       </Text>
       <Text fontWeight="800" noOfLines={1}>
@@ -547,7 +547,7 @@ function Field({ label, ...props }) {
 
 function Pill({ children }) {
   return (
-    <Badge rounded="full" px={2.5} py={0.5} bg="orange.50" color="warm.brown" fontSize="xs" textTransform="none">
+    <Badge rounded="full" px={{ base: 2, md: 2.5 }} py={0.5} bg="orange.50" color="warm.brown" fontSize={{ base: '10px', md: 'xs' }} textTransform="none">
       {children || text.unknown}
     </Badge>
   );

@@ -8,7 +8,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   FaCalendarCheck,
   FaClipboardCheck,
@@ -16,6 +16,7 @@ import {
   FaRightFromBracket,
   FaUser,
 } from 'react-icons/fa6';
+import { clearUser } from '../utils/storage.js';
 
 const navItems = [
   { label: '個人資料', to: '/profile', icon: FaUser },
@@ -69,8 +70,14 @@ export default function MemberLayout({ title, subtitle, active = 'home', childre
 }
 
 function MemberSidebar({ active, pathname }) {
+  const navigate = useNavigate();
+  const logout = () => {
+    clearUser();
+    navigate('/');
+  };
+
   return (
-    <Box w={{ base: '92px', sm: '112px', md: '180px', lg: '230px' }} flexShrink={0}>
+    <Box w={{ base: '74px', sm: '88px', md: '160px', lg: '230px' }} flexShrink={0}>
       <Box
         w="100%"
         flexShrink={0}
@@ -78,11 +85,11 @@ function MemberSidebar({ active, pathname }) {
         border="1px solid"
         borderColor="orange.100"
         rounded={{ base: 'xl', lg: '2xl' }}
-        p={{ base: 2, md: 3, lg: 4 }}
+        p={{ base: 1.5, md: 2.5, lg: 4 }}
         boxShadow="0 16px 38px rgba(111,69,31,0.09)"
         position="sticky"
-        top={{ base: '92px', md: '112px', lg: '128px' }}
-        maxH={{ base: 'calc(100vh - 110px)', md: 'calc(100vh - 130px)', lg: 'calc(100vh - 148px)' }}
+        top={{ base: '82px', md: '112px', lg: '128px' }}
+        maxH={{ base: 'calc(100vh - 98px)', md: 'calc(100vh - 130px)', lg: 'calc(100vh - 148px)' }}
         overflowY="auto"
         sx={{
           scrollbarWidth: 'thin',
@@ -90,7 +97,7 @@ function MemberSidebar({ active, pathname }) {
           '&::-webkit-scrollbar-thumb': { background: '#f6ad55', borderRadius: '999px' },
         }}
       >
-        <SimpleGrid columns={1} spacing={{ base: 1.5, lg: 2 }}>
+        <SimpleGrid columns={1} spacing={{ base: 1, lg: 2 }}>
           {navItems.map((item) => {
             const isActive =
               active === item.to ||
@@ -102,13 +109,14 @@ function MemberSidebar({ active, pathname }) {
                 as={NavLink}
                 to={item.to}
                 justifyContent="flex-start"
-                h={{ base: '34px', md: '42px', lg: '50px' }}
-                px={{ base: 2, md: 3, lg: 4 }}
+                h={{ base: '30px', md: '40px', lg: '50px' }}
+                px={{ base: 1.5, md: 2.5, lg: 4 }}
                 bg={isActive ? 'orange.50' : 'transparent'}
                 color={isActive ? 'warm.orangeDark' : 'warm.ink'}
-                borderRadius={{ base: '10px', lg: '14px' }}
-                leftIcon={<Icon as={item.icon} boxSize={{ base: 3, md: 3.5, lg: 4 }} />}
-                fontSize={{ base: '10px', sm: '11px', md: 'sm', lg: 'md' }}
+                borderRadius={{ base: '9px', lg: '14px' }}
+                leftIcon={<Icon as={item.icon} boxSize={{ base: 2.5, md: 3.5, lg: 4 }} />}
+                iconSpacing={{ base: 1, md: 2 }}
+                fontSize={{ base: '8.5px', sm: '9.5px', md: 'xs', lg: 'md' }}
                 _hover={{ bg: 'orange.50', color: 'warm.orangeDark', transform: 'translateY(-2px)' }}
               >
                 <Text noOfLines={1}>{item.label}</Text>
@@ -123,10 +131,12 @@ function MemberSidebar({ active, pathname }) {
           <Button
             justifyContent="flex-start"
             variant="ghost"
-            leftIcon={<Icon as={FaRightFromBracket} boxSize={{ base: 3, md: 3.5, lg: 4 }} />}
-            h={{ base: '34px', md: '42px', lg: '50px' }}
-            px={{ base: 2, md: 3, lg: 4 }}
-            fontSize={{ base: '10px', sm: '11px', md: 'sm', lg: 'md' }}
+            leftIcon={<Icon as={FaRightFromBracket} boxSize={{ base: 2.5, md: 3.5, lg: 4 }} />}
+            h={{ base: '30px', md: '40px', lg: '50px' }}
+            px={{ base: 1.5, md: 2.5, lg: 4 }}
+            iconSpacing={{ base: 1, md: 2 }}
+            fontSize={{ base: '8.5px', sm: '9.5px', md: 'xs', lg: 'md' }}
+            onClick={logout}
           >
             登出
           </Button>

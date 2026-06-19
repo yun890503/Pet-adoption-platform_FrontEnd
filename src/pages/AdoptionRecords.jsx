@@ -92,12 +92,12 @@ export default function AdoptionRecords() {
       </SimpleGrid>
 
       <Box bg="white" rounded="2xl" border="1px solid" borderColor="orange.100" boxShadow="lg" overflow="hidden">
-        <Flex p={4} gap={3} align="center" flexWrap="wrap" borderBottom="1px solid" borderColor="orange.100">
-          <HStack flex={{ base: '1 1 100%', md: '0 1 320px' }} bg="white" border="1px solid" borderColor="gray.200" rounded="lg" px={3}>
-            <Icon as={FaMagnifyingGlass} color="gray.400" boxSize={4} />
-            <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={text.search} border="0" fontSize="sm" _focusVisible={{ boxShadow: 'none' }} />
+        <Flex p={{ base: 2.5, md: 4 }} gap={{ base: 2, md: 3 }} align="center" flexWrap="wrap" borderBottom="1px solid" borderColor="orange.100">
+          <HStack flex={{ base: '1 1 100%', md: '0 1 320px' }} bg="white" border="1px solid" borderColor="gray.200" rounded="lg" px={{ base: 2, md: 3 }}>
+            <Icon as={FaMagnifyingGlass} color="gray.400" boxSize={{ base: 3.5, md: 4 }} />
+            <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={text.search} border="0" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }} _focusVisible={{ boxShadow: 'none' }} />
           </HStack>
-          <Select maxW={{ base: '100%', md: '180px' }} rounded="lg" fontSize="sm" ml={{ md: 'auto' }} value={sort} onChange={(event) => setSort(event.target.value)}>
+          <Select maxW={{ base: '100%', md: '180px' }} rounded="lg" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }} ml={{ md: 'auto' }} value={sort} onChange={(event) => setSort(event.target.value)}>
             <option value="newest">{text.newest}</option>
             <option value="oldest">{text.oldest}</option>
           </Select>
@@ -124,11 +124,11 @@ export default function AdoptionRecords() {
         border="1px solid"
         borderColor="orange.100"
         rounded="2xl"
-        p={{ base: 4, md: 5 }}
+        p={{ base: 3, md: 5 }}
       >
         <HStack spacing={3}>
           <Flex boxSize="42px" align="center" justify="center" rounded="xl" bg="orange.50" color="warm.brown">
-            <Icon as={FaHouseChimney} boxSize={5} />
+            <Icon as={FaHouseChimney} boxSize={{ base: 4, md: 5 }} />
           </Flex>
           <Text fontSize={{ base: 'sm', md: 'md' }} fontWeight="900" color="warm.brown">
             {text.loveText}
@@ -144,15 +144,15 @@ export default function AdoptionRecords() {
 
 function Stat({ icon, value, label, color, compact = false }) {
   return (
-    <HStack bg="rgba(255,255,255,0.94)" rounded="xl" p={{ base: 3, md: 4 }} border="1px solid" borderColor="orange.100" boxShadow="md" spacing={3}>
-      <Flex boxSize={{ base: '34px', md: '40px' }} rounded="xl" align="center" justify="center" bg={`${color}.50`} color={`${color}.500`} flexShrink={0}>
-        <Icon as={icon} boxSize={{ base: 4, md: 5 }} />
+    <HStack bg="rgba(255,255,255,0.94)" rounded="xl" p={{ base: 2, md: 4 }} border="1px solid" borderColor="orange.100" boxShadow="md" spacing={{ base: 2, md: 3 }} minW={0}>
+      <Flex boxSize={{ base: '28px', md: '40px' }} rounded="xl" align="center" justify="center" bg={`${color}.50`} color={`${color}.500`} flexShrink={0}>
+        <Icon as={icon} boxSize={{ base: 3.5, md: 5 }} />
       </Flex>
       <Box minW={0}>
         <Text fontSize={compact ? { base: 'sm', md: 'md' } : { base: '2xl', md: '3xl' }} fontWeight="900" color="warm.brown" lineHeight="1" noOfLines={1}>
           {value}
         </Text>
-        <Text fontSize={{ base: 'xs', md: 'sm' }} fontWeight="800" color="warm.ink" noOfLines={1}>
+        <Text fontSize={{ base: '10px', md: 'sm' }} fontWeight="800" color="warm.ink" noOfLines={2}>
           {label}
         </Text>
       </Box>
@@ -163,17 +163,17 @@ function Stat({ icon, value, label, color, compact = false }) {
 function RecordRow({ record }) {
   return (
     <Flex
-      p={{ base: 4, md: 5 }}
-      gap={4}
+      p={{ base: 3, md: 5 }}
+      gap={{ base: 3, md: 4 }}
       align={{ base: 'stretch', xl: 'center' }}
       direction={{ base: 'column', md: 'row' }}
       borderBottom="1px solid"
       borderColor="orange.100"
       _last={{ borderBottom: 0 }}
     >
-      <HStack spacing={4} flex="1.2" align="start" minW={0}>
+      <HStack spacing={{ base: 2.5, md: 4 }} flex="1.2" align="start" minW={0}>
         <Box position="relative" flexShrink={0}>
-          <Image src={record.image} alt={record.name} boxSize={{ base: '84px', md: '104px' }} objectFit="cover" rounded="xl" />
+          <Image src={record.image} alt={record.name} boxSize={{ base: '62px', md: '104px' }} objectFit="cover" rounded="xl" />
           <Badge position="absolute" top="2" left="2" colorScheme="green" rounded="md" px={2} py={0.5} fontSize="2xs">
             {text.completed}
           </Badge>
@@ -181,7 +181,7 @@ function RecordRow({ record }) {
 
         <Box minW={0}>
           <HStack spacing={2}>
-            <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="900" color="warm.brown" noOfLines={1}>
+            <Text fontSize={{ base: 'md', md: 'xl' }} fontWeight="900" color="warm.brown" noOfLines={1}>
               {record.name}
             </Text>
             <Text color={record.gender.includes('\u5973') ? 'pink.400' : 'blue.400'} fontWeight="900" fontSize="sm" noOfLines={1}>
@@ -193,13 +193,13 @@ function RecordRow({ record }) {
             <Pill>{record.age}</Pill>
             <Pill>{record.breed}</Pill>
           </HStack>
-          <Text mt={2} color="gray.700" fontSize="sm" noOfLines={2}>
+          <Text mt={2} color="gray.700" fontSize={{ base: 'xs', md: 'sm' }} noOfLines={2}>
             {record.personality}
           </Text>
         </Box>
       </HStack>
 
-      <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={2} flex="1" fontSize="sm">
+      <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 1.5, md: 2 }} flex="1" fontSize={{ base: 'xs', md: 'sm' }}>
         <Detail icon={FaCalendarDays} label={text.date} value={record.date} />
         <Detail icon={FaCalendarCheck} label={text.number} value={record.no} />
         <Detail icon={FaLocationDot} label={text.location} value={record.location} />
@@ -207,7 +207,7 @@ function RecordRow({ record }) {
       </SimpleGrid>
 
       <VStack align="stretch" minW={{ md: '130px' }} spacing={2}>
-        <Button as={Link} to={`/animals/${record.id}`} size="sm" variant="outline" colorScheme="orange">
+        <Button as={Link} to={`/animals/${record.id}`} size={{ base: 'xs', md: 'sm' }} variant="outline" colorScheme="orange">
           {text.viewPet}
         </Button>
       </VStack>
@@ -219,7 +219,7 @@ function Detail({ icon, label, value }) {
   return (
     <HStack color="warm.ink" spacing={2} minW={0}>
       <Icon as={icon} color="warm.brown" boxSize={3.5} flexShrink={0} />
-      <Text color="gray.600" whiteSpace="nowrap">
+      <Text color="gray.600" whiteSpace="nowrap" flexShrink={0}>
         {label}
       </Text>
       <Text fontWeight="800" noOfLines={1}>
@@ -231,7 +231,7 @@ function Detail({ icon, label, value }) {
 
 function Pill({ children }) {
   return (
-    <Badge rounded="full" px={2.5} py={0.5} bg="orange.50" color="warm.brown" fontSize="xs" textTransform="none">
+    <Badge rounded="full" px={{ base: 2, md: 2.5 }} py={0.5} bg="orange.50" color="warm.brown" fontSize={{ base: '10px', md: 'xs' }} textTransform="none">
       {children || text.unknown}
     </Badge>
   );

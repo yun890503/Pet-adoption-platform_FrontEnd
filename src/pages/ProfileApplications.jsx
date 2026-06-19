@@ -90,8 +90,8 @@ export default function ProfileApplications() {
 
       <Flex
         mb={4}
-        p={{ base: 4, md: 5 }}
-        gap={{ base: 3, md: 4 }}
+        p={{ base: 3, md: 5 }}
+        gap={{ base: 2, md: 4 }}
         align={{ base: 'stretch', md: 'center' }}
         justify="space-between"
         direction={{ base: 'column', md: 'row' }}
@@ -102,31 +102,31 @@ export default function ProfileApplications() {
         boxShadow="md"
       >
         <HStack spacing={3} align="start">
-          <Flex boxSize={{ base: '42px', md: '46px' }} rounded="xl" align="center" justify="center" bg="orange.50" color="warm.orange">
-            <Icon as={FaClipboardCheck} boxSize={{ base: 5, md: 6 }} />
+          <Flex boxSize={{ base: '30px', md: '46px' }} rounded="xl" align="center" justify="center" bg="orange.50" color="warm.orange" flexShrink={0}>
+            <Icon as={FaClipboardCheck} boxSize={{ base: 3.5, md: 6 }} />
           </Flex>
           <Box>
-            <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight="900" color="warm.brown">
+            <Text fontSize={{ base: 'sm', md: 'lg' }} fontWeight="900" color="warm.brown">
               想再申請認養嗎？
             </Text>
-            <Text mt={1} fontSize={{ base: 'sm', md: 'sm' }} color="gray.700" fontWeight="700">
+            <Text mt={1} fontSize={{ base: 'xs', md: 'sm' }} color="gray.700" fontWeight="700">
               前往毛孩列表，選擇喜歡的毛孩後即可填寫新的認養申請。
             </Text>
           </Box>
         </HStack>
-        <Button onClick={onOpen} bg="warm.orange" color="white" px={7} alignSelf={{ base: 'stretch', md: 'center' }}>
+        <Button onClick={onOpen} bg="warm.orange" color="white" px={{ base: 4, md: 7 }} size={{ base: 'sm', md: 'md' }} alignSelf={{ base: 'stretch', md: 'center' }}>
           前往申請認養
         </Button>
       </Flex>
 
       <Box bg="white" rounded="2xl" border="1px solid" borderColor="orange.100" boxShadow="lg" overflow="hidden">
-        <Flex p={4} gap={3} align="center" flexWrap="wrap" borderBottom="1px solid" borderColor="orange.100">
-          <HStack flex={{ base: '1 1 100%', md: '0 1 300px' }} bg="white" border="1px solid" borderColor="gray.200" rounded="lg" px={3}>
-            <Icon as={FaMagnifyingGlass} color="gray.400" />
-            <Input placeholder="搜尋毛孩名稱" border="0" _focusVisible={{ boxShadow: 'none' }} />
+        <Flex p={{ base: 2.5, md: 4 }} gap={{ base: 2, md: 3 }} align="center" flexWrap="wrap" borderBottom="1px solid" borderColor="orange.100">
+          <HStack flex={{ base: '1 1 100%', md: '0 1 300px' }} bg="white" border="1px solid" borderColor="gray.200" rounded="lg" px={{ base: 2, md: 3 }}>
+            <Icon as={FaMagnifyingGlass} color="gray.400" boxSize={{ base: 3.5, md: 4 }} />
+            <Input placeholder="搜尋毛孩名稱" border="0" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }} _focusVisible={{ boxShadow: 'none' }} />
           </HStack>
-          <Select maxW={{ base: '100%', md: '260px' }} rounded="lg" placeholder="全部狀態" />
-          <Select maxW={{ base: '100%', md: '180px' }} rounded="lg" ml={{ md: 'auto' }} defaultValue="newest">
+          <Select maxW={{ base: '100%', md: '260px' }} rounded="lg" placeholder="全部狀態" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }} />
+          <Select maxW={{ base: '100%', md: '180px' }} rounded="lg" ml={{ md: 'auto' }} defaultValue="newest" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }}>
             <option value="newest">最新申請</option>
             <option value="oldest">較早申請</option>
           </Select>
@@ -161,15 +161,15 @@ export default function ProfileApplications() {
 
 function Stat({ icon, value, label, color }) {
   return (
-    <HStack bg="rgba(255,255,255,0.92)" rounded="xl" p={5} border="1px solid" borderColor="orange.100" boxShadow="md" spacing={4}>
-      <Flex boxSize="48px" rounded="xl" align="center" justify="center" bg={`${color}.50`} color={`${color}.500`}>
-        <Icon as={icon} boxSize={6} />
+    <HStack bg="rgba(255,255,255,0.92)" rounded="xl" p={{ base: 2, md: 5 }} border="1px solid" borderColor="orange.100" boxShadow="md" spacing={{ base: 2, md: 4 }} minW={0}>
+      <Flex boxSize={{ base: '28px', md: '48px' }} rounded="xl" align="center" justify="center" bg={`${color}.50`} color={`${color}.500`} flexShrink={0}>
+        <Icon as={icon} boxSize={{ base: 3.5, md: 6 }} />
       </Flex>
-      <Box>
-        <Text fontSize="4xl" fontWeight="900" color="warm.brown" lineHeight="1">
+      <Box minW={0}>
+        <Text fontSize={{ base: 'xl', md: '4xl' }} fontWeight="900" color="warm.brown" lineHeight="1" noOfLines={1}>
           {value}
         </Text>
-        <Text fontWeight="800" color="warm.ink">
+        <Text fontSize={{ base: '10px', md: 'md' }} fontWeight="800" color="warm.ink" noOfLines={2}>
           {label}
         </Text>
       </Box>
@@ -414,59 +414,59 @@ function ApplicationRow({ row }) {
 
   return (
     <Flex
-      p={{ base: 4, md: 5 }}
-      gap={5}
+      p={{ base: 3, md: 5 }}
+      gap={{ base: 3, md: 5 }}
       align={{ base: 'stretch', xl: 'center' }}
       direction={{ base: 'column', md: 'row' }}
       borderBottom="1px solid"
       borderColor="orange.100"
     >
-      <HStack spacing={4} flex="1.2" align="start">
-        <Image src={image} alt={row.animal.name} boxSize={{ base: '88px', md: '110px' }} objectFit="cover" rounded="xl" />
+      <HStack spacing={{ base: 2.5, md: 4 }} flex="1.2" align="start" minW={0}>
+        <Image src={image} alt={row.animal.name} boxSize={{ base: '62px', md: '110px' }} objectFit="cover" rounded="xl" flexShrink={0} />
         <Box minW={0}>
-          <HStack>
-            <Text fontSize="2xl" fontWeight="900" color="warm.brown">
+          <HStack spacing={2}>
+            <Text fontSize={{ base: 'md', md: '2xl' }} fontWeight="900" color="warm.brown" noOfLines={1}>
               {row.animal.name}
             </Text>
-            <Text color={row.animal.gender === '女生' ? 'pink.400' : 'blue.400'} fontWeight="900">
+            <Text color={row.animal.gender === '女生' ? 'pink.400' : 'blue.400'} fontWeight="900" fontSize={{ base: 'xs', md: 'md' }}>
               {row.animal.gender === '女生' ? '♀' : '♂'}
             </Text>
           </HStack>
-          <HStack flexWrap="wrap" mt={1}>
-            <Badge rounded="full" px={3} py={1} bg="orange.50" color="warm.brown">
+          <HStack flexWrap="wrap" mt={1} spacing={{ base: 1, md: 2 }}>
+            <Badge rounded="full" px={{ base: 2, md: 3 }} py={{ base: 0.5, md: 1 }} bg="orange.50" color="warm.brown" fontSize={{ base: '10px', md: 'xs' }}>
               {row.animal.type === 'cat' ? '貓咪' : '狗狗'}
             </Badge>
-            <Badge rounded="full" px={3} py={1} bg="orange.50" color="warm.brown">
+            <Badge rounded="full" px={{ base: 2, md: 3 }} py={{ base: 0.5, md: 1 }} bg="orange.50" color="warm.brown" fontSize={{ base: '10px', md: 'xs' }}>
               {row.animal.age}
             </Badge>
-            <Badge rounded="full" px={3} py={1} bg="orange.50" color="warm.brown">
+            <Badge rounded="full" px={{ base: 2, md: 3 }} py={{ base: 0.5, md: 1 }} bg="orange.50" color="warm.brown" fontSize={{ base: '10px', md: 'xs' }}>
               {row.animal.breed}
             </Badge>
           </HStack>
-          <Text mt={3}>申請日期：{row.date || '-'}</Text>
-          <Text>申請編號：{row.number || row.name}</Text>
+          <Text mt={{ base: 1.5, md: 3 }} fontSize={{ base: 'xs', md: 'md' }} noOfLines={1}>申請日期：{row.date || '-'}</Text>
+          <Text fontSize={{ base: 'xs', md: 'md' }} noOfLines={1}>申請編號：{row.number || row.name}</Text>
         </Box>
       </HStack>
-      <Box flex="1" borderLeft={{ xl: '1px solid' }} borderColor="orange.100" pl={{ xl: 6 }}>
-        <Badge colorScheme={config.color} rounded="lg" px={4} py={2} fontSize="md">
+      <Box flex="1" borderLeft={{ xl: '1px solid' }} borderColor="orange.100" pl={{ xl: 6 }} minW={0}>
+        <Badge colorScheme={config.color} rounded="lg" px={{ base: 2, md: 4 }} py={{ base: 1, md: 2 }} fontSize={{ base: 'xs', md: 'md' }}>
           {config.label}
         </Badge>
         {config.text.split('\n').map((line) => (
-          <Text key={line} mt={2} color="gray.700">
+          <Text key={line} mt={2} color="gray.700" fontSize={{ base: 'xs', md: 'md' }} noOfLines={2}>
             {line}
           </Text>
         ))}
       </Box>
       <VStack align="stretch" minW={{ md: '150px' }}>
-        <Button variant="outline" colorScheme="orange">
+        <Button variant="outline" colorScheme="orange" size={{ base: 'xs', md: 'md' }}>
           查看詳情
         </Button>
         {row.status === 'approved' ? (
-          <Button as={Link} to="/profile/appointments" variant="outline" >
+          <Button as={Link} to="/profile/appointments" variant="outline" size={{ base: 'xs', md: 'md' }}>
             預約訪視交接
           </Button>
         ) : row.status !== 'cancelled' ? (
-          <Button variant="outline">聯絡我們</Button>
+          <Button variant="outline" size={{ base: 'xs', md: 'md' }}>聯絡我們</Button>
         ) : null}
       </VStack>
     </Flex>
