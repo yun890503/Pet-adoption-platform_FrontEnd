@@ -22,7 +22,7 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   FaCameraRetro,
   FaCat,
@@ -39,6 +39,7 @@ import {
   FaStar,
 } from 'react-icons/fa6';
 import { GiPartyPopper } from 'react-icons/gi';
+import { useNavigate } from 'react-router-dom';
 import volunteerHero from '../../image/feb89baf-9e79-4e32-85b8-dc10210384f0.png?url';
 import { odooApi } from '../services/odooApi.js';
 import { getUser } from '../utils/storage.js';
@@ -119,12 +120,12 @@ const fallbackFeedback = [
 export default function Volunteer() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const feedbackModal = useDisclosure();
+  const navigate = useNavigate();
   const toast = useToast();
   const [feedback, setFeedback] = useState(fallbackFeedback);
   const [message, setMessage] = useState('');
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-  const user = useMemo(() => getUser(), []);
 
   useEffect(() => {
     let mounted = true;
@@ -141,12 +142,19 @@ export default function Volunteer() {
 
   const submitFeedback = async () => {
     const text = message.trim();
-    if (!user?.token) {
+    const currentUser = getUser();
+    if (!currentUser?.token) {
       toast({ title: '請先登入會員', description: '登入後就能分享你的志工心得。', status: 'warning' });
+      feedbackModal.onClose();
+      navigate('/login');
       return;
     }
     if (!text) {
       toast({ title: '請輸入心得內容', status: 'warning' });
+      return;
+    }
+    if (!rating) {
+      toast({ title: '請選擇星星評分', status: 'warning' });
       return;
     }
 
@@ -159,7 +167,7 @@ export default function Volunteer() {
       });
       setFeedback((items) => [created, ...items]);
       setMessage('');
-      setRating(5);
+      setRating(0);
       feedbackModal.onClose();
       toast({ title: '心得已送出', status: 'success' });
     } catch (error) {
@@ -215,7 +223,14 @@ export default function Volunteer() {
                   {feedback.map((item) => (
                     <FeedbackCard key={item.id} item={item} />
                   ))}
-                  <Button leftIcon={<FaPenToSquare />} variant="outline" colorScheme="orange" rounded="full" onClick={feedbackModal.onOpen}>
+                  <Button leftIcon={<FaPenToSquare />} variant="outline" colorScheme="orange" rounded="full" onClick={() => {
+                    if (!getUser()?.token) {
+                      toast({ title: '請先登入會員', description: '登入後就能分享你的志工心得。', status: 'warning' });
+                      navigate('/login');
+                      return;
+                    }
+                    feedbackModal.onOpen();
+                  }}>
                     分享你的心得
                   </Button>
                 </VStack>
@@ -412,7 +427,7 @@ function FeedbackModal({ isOpen, onClose, message, rating, submitting, onMessage
             {Array.from({ length: 5 }).map((_, index) => {
               const value = index + 1;
               return (
-                <Button key={value} variant="ghost" minW="36px" h="36px" p={0} color={value <= rating ? 'warm.orange' : 'orange.200'} onClick={() => onRatingChange(value)} _hover={{ bg: 'orange.50' }}>
+                <Button key={value} variant="ghost" minW="36px" h="36px" p={0} color={value <= rating ? 'warm.orange' : 'gray.300'} onClick={() => onRatingChange(value)} _hover={{ bg: 'orange.50' }}>
                   <Icon as={FaStar} boxSize={7} />
                 </Button>
               );
