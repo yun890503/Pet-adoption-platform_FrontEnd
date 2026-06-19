@@ -116,29 +116,39 @@ export default function Favorites() {
 
   return (
     <MemberLayout active="/favorites">
-      <Flex bg="rgba(255,255,255,0.94)" rounded="2xl" p={4} border="1px solid" borderColor="orange.100" boxShadow="md" gap={3} flexWrap="wrap" mb={5}>
-        <InputGroup maxW={{ base: '100%', md: '330px' }}>
-          <InputLeftElement pointerEvents="none">
+      <Flex
+        bg="rgba(255,255,255,0.94)"
+        rounded={{ base: 'xl', md: '2xl' }}
+        p={{ base: 2.5, md: 3 }}
+        border="1px solid"
+        borderColor="orange.100"
+        boxShadow="md"
+        gap={{ base: 2, md: 3 }}
+        flexWrap="wrap"
+        mb={{ base: 3, md: 4 }}
+      >
+        <InputGroup maxW={{ base: '100%', md: '300px' }} size={{ base: 'sm', md: 'md' }}>
+          <InputLeftElement pointerEvents="none" h={{ base: 8, md: 10 }}>
             <FaMagnifyingGlass color="#a0aec0" />
           </InputLeftElement>
-          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={text.searchPlaceholder} rounded="lg" />
+          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={text.searchPlaceholder} rounded="lg" fontSize={{ base: 'xs', md: 'sm' }} />
         </InputGroup>
 
-        <Select value={type} onChange={(event) => setType(event.target.value)} maxW={{ base: '100%', md: '180px' }} rounded="lg">
+        <Select value={type} onChange={(event) => setType(event.target.value)} maxW={{ base: '100%', sm: '130px', md: '160px' }} rounded="lg" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }}>
           <option value="all">{text.allTypes}</option>
           <option value="dog">{text.dog}</option>
           <option value="cat">{text.cat}</option>
         </Select>
 
-        <Select value={sort} onChange={(event) => setSort(event.target.value)} maxW={{ base: '100%', md: '180px' }} rounded="lg">
+        <Select value={sort} onChange={(event) => setSort(event.target.value)} maxW={{ base: '100%', sm: '130px', md: '160px' }} rounded="lg" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }}>
           <option value="newest">{text.newest}</option>
           <option value="age">{text.age}</option>
           <option value="breed">{text.breed}</option>
         </Select>
 
         <HStack ml={{ md: 'auto' }}>
-          <IconButton aria-label={text.gridView} icon={<FaGrip />} bg="orange.50" color="warm.brown" />
-          <IconButton aria-label={text.listView} icon={<FaList />} variant="outline" />
+          <IconButton aria-label={text.gridView} icon={<FaGrip />} bg="orange.50" color="warm.brown" size={{ base: 'sm', md: 'md' }} />
+          <IconButton aria-label={text.listView} icon={<FaList />} variant="outline" size={{ base: 'sm', md: 'md' }} />
         </HStack>
       </Flex>
 
@@ -147,7 +157,7 @@ export default function Favorites() {
       ) : loading ? (
         <EmptyState text={text.loading} />
       ) : filtered.length ? (
-        <SimpleGrid columns={{ base: 1, sm: 2, xl: 4 }} spacing={{ base: 4, md: 5 }} alignItems="start">
+        <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} spacing={{ base: 2.5, md: 3.5, xl: 4 }} alignItems="start">
           {filtered.map((animal) => (
             <AnimalCard key={animal.id} animal={animal} />
           ))}

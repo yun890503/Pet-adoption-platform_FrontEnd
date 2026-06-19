@@ -5,6 +5,7 @@ import {
   Grid,
   HStack,
   Icon,
+  Image,
   Input,
   InputGroup,
   InputLeftElement,
@@ -12,11 +13,14 @@ import {
   SimpleGrid,
   Text,
   VStack,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
-import { FaCat, FaDog, FaMagnifyingGlass, FaPaw } from 'react-icons/fa6';
+import { FaCat, FaChevronDown, FaDog, FaMagnifyingGlass, FaPaw, FaSliders } from 'react-icons/fa6';
 import AnimalCard from '../components/AnimalCard.jsx';
 import { odooApi } from '../services/odooApi.js';
+
+const animalsHeroImage = new URL('../../image/3a4e0cd3-5d24-477d-bca1-783aaf3ba9c9.png', import.meta.url).href;
 
 const text = {
   all: '\u5168\u90e8',
@@ -48,6 +52,8 @@ const text = {
   senior: '5 \u6b72\u4ee5\u4e0a',
   loading: '\u6b63\u5728\u8f09\u5165\u6bdb\u5b69\u8cc7\u6599...',
   empty: '\u6c92\u6709\u627e\u5230\u60f3\u8981\u7684\u6bdb\u5b69\u55ce\uff1f\u6211\u5011\u9084\u6709\u66f4\u591a\u6bdb\u5b69\u7b49\u8457\u4e00\u500b\u6eab\u6696\u7684\u5bb6\uff01',
+  openFilters: '\u5c55\u958b\u641c\u5c0b',
+  closeFilters: '\u6536\u5408\u641c\u5c0b',
 };
 
 const typeOptions = [
@@ -65,6 +71,7 @@ const genderOptions = [
 const sizeOptions = [text.noLimit, text.small, text.medium, text.large];
 
 export default function Animals() {
+  const filterDisclosure = useDisclosure({ defaultIsOpen: false });
   const [type, setType] = useState('all');
   const [gender, setGender] = useState('all');
   const [age, setAge] = useState('all');
@@ -121,8 +128,19 @@ export default function Animals() {
 
   return (
     <Box bg="linear-gradient(180deg, #fff8ea 0%, #fffaf3 58%, #fff4df 100%)" minH="calc(100vh - 90px)">
-      <Container maxW="1420px" px={{ base: 4, md: 6, xl: 8 }} py={{ base: 4, md: 6 }}>
-        <Grid templateColumns={{ base: '1fr', lg: '220px minmax(0, 1fr)' }} gap={{ base: 5, lg: 6 }} alignItems="start">
+      <Box borderBottom="1px solid" borderColor="orange.100" bg="#fff7e8">
+        <Image
+          src={animalsHeroImage}
+          alt=""
+          w="100%"
+          h={{ base: '138px', md: '220px', lg: '300px' }}
+          objectFit="cover"
+          objectPosition="center"
+        />
+      </Box>
+
+      <Container maxW="1480px" px={{ base: 4, md: 6, xl: 8 }} py={{ base: 4, md: 6 }}>
+        <Grid templateColumns={{ base: '1fr', lg: '200px minmax(0, 1fr)' }} gap={{ base: 4, lg: 6 }} alignItems="start">
           <FilterSidebar
             type={type}
             setType={setType}
@@ -136,6 +154,8 @@ export default function Animals() {
             setDraftKeyword={setDraftKeyword}
             applyKeyword={applyKeyword}
             resetFilters={resetFilters}
+            isOpen={filterDisclosure.isOpen}
+            onToggle={filterDisclosure.onToggle}
           />
 
           <Box alignSelf="start">
@@ -172,7 +192,7 @@ export default function Animals() {
             {loading ? (
               <EmptyState text={text.loading} />
             ) : filteredList.length ? (
-              <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={{ base: 4, md: 5 }} alignItems="start">
+              <SimpleGrid columns={{ base: 2, md: 3, xl: 4 }} spacing={{ base: 2.5, md: 3.5, xl: 4 }} alignItems="start">
                 {filteredList.map((animal) => (
                   <AnimalCard key={animal.id} animal={animal} />
                 ))}
@@ -200,6 +220,8 @@ function FilterSidebar({
   setDraftKeyword,
   applyKeyword,
   resetFilters,
+  isOpen,
+  onToggle,
 }) {
   return (
     <Box
@@ -211,17 +233,34 @@ function FilterSidebar({
       border="1px solid"
       borderColor="orange.100"
       rounded="18px"
-      p={{ base: 4, md: 4 }}
+      p={{ base: 3, lg: 3 }}
       boxShadow="0 14px 34px rgba(111, 69, 31, 0.09)"
     >
-      <HStack spacing={2.5} mb={4}>
-        <Icon as={FaPaw} color="warm.brown" boxSize={4.5} />
-        <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="900" color="warm.brown">
+      <Button
+        display={{ base: 'flex', lg: 'none' }}
+        w="100%"
+        h="38px"
+        justifyContent="space-between"
+        leftIcon={<Icon as={FaSliders} />}
+        rightIcon={<Icon as={FaChevronDown} transform={isOpen ? 'rotate(180deg)' : 'none'} transition="0.2s ease" />}
+        bg="orange.50"
+        color="warm.brown"
+        fontSize="sm"
+        onClick={onToggle}
+        mb={isOpen ? 3 : 0}
+      >
+        {isOpen ? text.closeFilters : text.openFilters}
+      </Button>
+
+      <Box display={{ base: isOpen ? 'block' : 'none', lg: 'block' }}>
+      <HStack spacing={2} mb={3}>
+        <Icon as={FaPaw} color="warm.brown" boxSize={4} />
+        <Text fontSize={{ base: 'md', lg: 'lg' }} fontWeight="900" color="warm.brown">
           {text.filterTitle}
         </Text>
       </HStack>
 
-      <VStack align="stretch" spacing={4}>
+      <VStack align="stretch" spacing={3}>
         <FilterGroup title={text.keywordTitle}>
           <InputGroup size="sm">
             <InputLeftElement pointerEvents="none">
@@ -237,15 +276,15 @@ function FilterSidebar({
               bg="rgba(255,255,255,0.48)"
               borderColor="orange.100"
               rounded="9px"
-              fontSize="sm"
+              fontSize="xs"
             />
           </InputGroup>
         </FilterGroup>
 
-        <Button h="38px" bg="warm.orange" color="white" fontSize="sm" onClick={applyKeyword}>
+        <Button h="34px" bg="warm.orange" color="white" fontSize="xs" onClick={applyKeyword}>
           {text.search}
         </Button>
-        <Button h="38px" variant="outline" borderColor="warm.orange" color="warm.orangeDark" fontSize="sm" onClick={resetFilters}>
+        <Button h="34px" variant="outline" borderColor="warm.orange" color="warm.orangeDark" fontSize="xs" onClick={resetFilters}>
           {text.clear}
         </Button>
 
@@ -263,7 +302,7 @@ function FilterSidebar({
                 border="1px solid"
                 borderColor="orange.100"
                 borderTopWidth={option.value === 'all' ? '1px' : '0'}
-                fontSize={{ base: 'xs', md: 'sm' }}
+                fontSize="xs"
                 _first={{ roundedTop: '9px' }}
                 _last={{ roundedBottom: '9px' }}
                 _hover={{ bg: 'orange.50', transform: 'none' }}
@@ -286,7 +325,7 @@ function FilterSidebar({
         </FilterGroup>
 
         <FilterGroup title={text.age}>
-          <Select value={age} onChange={(event) => setAge(event.target.value)} h="36px" bg="rgba(255,255,255,0.55)" rounded="9px" fontSize="sm">
+          <Select value={age} onChange={(event) => setAge(event.target.value)} h="34px" bg="rgba(255,255,255,0.55)" rounded="9px" fontSize="xs">
             <option value="all">{text.noLimit}</option>
             <option value="young">{text.young}</option>
             <option value="adult">{text.adult}</option>
@@ -304,6 +343,7 @@ function FilterSidebar({
           </VStack>
         </FilterGroup>
       </VStack>
+      </Box>
     </Box>
   );
 }
@@ -311,7 +351,7 @@ function FilterSidebar({
 function FilterGroup({ title, children }) {
   return (
     <Box borderBottom="1px solid" borderColor="orange.100" pb={3} _last={{ borderBottom: 0, pb: 0 }}>
-      <Text mb={2} color="warm.brown" fontSize={{ base: 'sm', md: 'md' }} fontWeight="900">
+      <Text mb={2} color="warm.brown" fontSize={{ base: 'xs', lg: 'sm' }} fontWeight="900">
         {title}
       </Text>
       {children}
@@ -328,7 +368,7 @@ function CheckButton({ active, onClick, children }) {
       minW="0"
       bg="transparent"
       color="warm.brown"
-      fontSize={{ base: 'xs', md: 'sm' }}
+      fontSize="xs"
       fontWeight="700"
       leftIcon={
         <Box
