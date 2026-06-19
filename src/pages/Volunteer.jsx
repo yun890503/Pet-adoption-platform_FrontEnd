@@ -8,6 +8,7 @@ import {
   Heading,
   HStack,
   Icon,
+  IconButton,
   Image,
   Modal,
   ModalBody,
@@ -37,6 +38,7 @@ import {
   FaPhone,
   FaRegClock,
   FaStar,
+  FaTrash,
 } from 'react-icons/fa6';
 import { GiPartyPopper } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
@@ -126,6 +128,7 @@ export default function Volunteer() {
   const [message, setMessage] = useState('');
   const [rating, setRating] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -177,6 +180,30 @@ export default function Volunteer() {
     }
   };
 
+  const deleteFeedback = async (item) => {
+    const currentUser = getUser();
+    if (!currentUser?.token) {
+      toast({ title: '請先登入會員', status: 'warning' });
+      navigate('/login');
+      return;
+    }
+    if (item.partnerId && currentUser.id && item.partnerId !== currentUser.id) {
+      toast({ title: '只能刪除自己的心得', status: 'warning' });
+      return;
+    }
+
+    setDeletingId(item.id);
+    try {
+      await odooApi.deleteVolunteerTestimonial(item.id);
+      setFeedback((items) => items.filter((entry) => entry.id !== item.id));
+      toast({ title: '心得已刪除', status: 'success' });
+    } catch (error) {
+      toast({ title: '刪除心得失敗', description: error.message, status: 'error' });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <Box bg="linear-gradient(180deg, #fff8ea 0%, #fffaf3 56%, #fff1d8 100%)" minH="100vh">
       <Container maxW="1280px" px={{ base: 0, sm: 4, md: 8 }} py={{ base: 0, md: 8 }}>
@@ -221,7 +248,7 @@ export default function Volunteer() {
               <InfoPanel title="志工心得" icon={FaStar}>
                 <VStack align="stretch" spacing={4}>
                   {feedback.map((item) => (
-                    <FeedbackCard key={item.id} item={item} />
+                    <FeedbackCard key={item.id} item={item} deleting={deletingId === item.id} onDelete={deleteFeedback} />
                   ))}
                   <Button leftIcon={<FaPenToSquare />} variant="outline" colorScheme="orange" rounded="full" onClick={() => {
                     if (!getUser()?.token) {
@@ -367,10 +394,12 @@ function InfoPanel({ title, icon, children }) {
   );
 }
 
-function FeedbackCard({ item }) {
+function FeedbackCard({ item, deleting, onDelete }) {
   const rating = Math.max(1, Math.min(5, Number(item.rating) || 5));
+  const user = getUser();
+  const canDelete = Boolean(user?.token && item.partnerId && user.id === item.partnerId);
   return (
-    <HStack align="start" bg="warm.cream" rounded="16px" p={3} spacing={3}>
+    <HStack align="start" bg="warm.cream" rounded="16px" p={3} spacing={3} position="relative">
       <DefaultAvatar />
       <Box>
         <HStack color="orange.400" spacing={1}>
@@ -385,6 +414,21 @@ function FeedbackCard({ item }) {
           {item.message}
         </Text>
       </Box>
+      {canDelete && (
+        <IconButton
+          aria-label="刪除心得"
+          icon={<FaTrash />}
+          size="sm"
+          variant="ghost"
+          color="gray.500"
+          position="absolute"
+          top="8px"
+          right="8px"
+          isLoading={deleting}
+          onClick={() => onDelete(item)}
+          _hover={{ bg: 'orange.50', color: 'warm.orange' }}
+        />
+      )}
     </HStack>
   );
 }

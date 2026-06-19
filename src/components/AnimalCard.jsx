@@ -75,7 +75,7 @@ export default function AnimalCard({ animal }) {
         if (event.key === 'Enter' || event.key === ' ') openDetail();
       }}
       overflow="hidden"
-      rounded="16px"
+      rounded={{ base: '12px', md: '16px' }}
       bg="white"
       border="1px solid"
       borderColor="orange.100"
@@ -113,26 +113,26 @@ export default function AnimalCard({ animal }) {
         />
       </Box>
 
-      <CardBody p={{ base: 2.5, md: 3 }} flex="1" overflow="hidden">
-        <VStack align="stretch" spacing={1.5} h="100%" overflow="hidden">
+      <CardBody p={{ base: 2, md: 3 }} flex="1" overflow="hidden">
+        <VStack align="stretch" spacing={{ base: 1, md: 1.5 }} h="100%" overflow="hidden">
           <Flex align="center" justify="space-between" gap={2}>
-            <Text fontSize={{ base: 'sm', md: 'md' }} fontWeight="900" color="warm.ink" noOfLines={1}>
+            <Text fontSize={{ base: 'xs', sm: 'sm', md: 'md' }} fontWeight="900" color="warm.ink" noOfLines={1}>
               {animal.name}
             </Text>
             <HStack color={isMale ? 'blue.400' : 'pink.400'} spacing={1.5} flexShrink={0}>
-              <Icon as={isMale ? FaMars : FaVenus} boxSize={{ base: 3, md: 3.5 }} />
-              <Text fontSize="xs" fontWeight="900" noOfLines={1}>
+              <Icon as={isMale ? FaMars : FaVenus} boxSize={{ base: 2.5, sm: 3, md: 3.5 }} />
+              <Text fontSize={{ base: '10px', sm: 'xs' }} fontWeight="900" noOfLines={1}>
                 {genderText || (isMale ? text.male : text.female)}
               </Text>
             </HStack>
           </Flex>
 
-          <HStack spacing={1.5} flexWrap="wrap" align="start" minH="24px">
+          <HStack spacing={{ base: 1, md: 1.5 }} flexWrap="wrap" align="start" minH={{ base: '18px', md: '24px' }}>
             <InfoPill>{animal.breed || text.emptyBreed}</InfoPill>
             <InfoPill>{formatAge(animal.age)}</InfoPill>
           </HStack>
 
-          <Text color="gray.700" fontSize={{ base: 'xs', md: 'sm' }} lineHeight="1.45" noOfLines={2} minH="0" overflow="hidden">
+          <Text color="gray.700" fontSize={{ base: '10px', sm: 'xs', md: 'sm' }} lineHeight={{ base: '1.35', md: '1.45' }} noOfLines={2} minH="0" overflow="hidden">
             {animal.personality || text.emptyPersonality}
           </Text>
         </VStack>
@@ -143,7 +143,7 @@ export default function AnimalCard({ animal }) {
 
 function InfoPill({ children }) {
   return (
-    <Badge px={2} py={0.5} rounded="8px" bg="orange.50" color="warm.brown" fontSize="xs" textTransform="none">
+    <Badge px={{ base: 1.5, md: 2 }} py={0.5} rounded="8px" bg="orange.50" color="warm.brown" fontSize={{ base: '9px', sm: 'xs' }} textTransform="none">
       {children}
     </Badge>
   );

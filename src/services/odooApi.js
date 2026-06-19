@@ -97,6 +97,11 @@ export const odooApi = {
       body: JSON.stringify(payload),
     });
   },
+  deleteVolunteerTestimonial(id) {
+    return request(`/volunteer-testimonials/${id}`, {
+      method: 'DELETE',
+    });
+  },
   createContactMessage(payload) {
     return request('/contact-messages', {
       method: 'POST',

@@ -46,7 +46,7 @@ export default function Home() {
         {loading ? (
           <EmptyState text="正在從 Odoo 載入毛孩資料..." />
         ) : featuredAnimals.length ? (
-          <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={{ base: 4, lg: 5 }} alignItems="start">
+          <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} spacing={{ base: 2.5, md: 4, lg: 5 }} alignItems="start">
             {featuredAnimals.map((animal) => (
               <AnimalCard key={animal.id} animal={animal} onAdopt={handleAdopt} />
             ))}
