@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaGrip, FaList, FaMagnifyingGlass } from 'react-icons/fa6';
 import AnimalCard from '../components/AnimalCard.jsx';
 import MemberLayout from '../components/MemberLayout.jsx';
+import MemberSearchToolbar from '../components/MemberSearchToolbar.jsx';
 import { odooApi } from '../services/odooApi.js';
 import { getUser, saveUser } from '../utils/storage.js';
 
@@ -116,41 +117,36 @@ export default function Favorites() {
 
   return (
     <MemberLayout active="/favorites">
-      <Flex
-        bg="rgba(255,255,255,0.94)"
-        rounded={{ base: 'xl', md: '2xl' }}
-        p={{ base: 2.5, md: 3 }}
-        border="1px solid"
-        borderColor="orange.100"
-        boxShadow="md"
-        gap={{ base: 2, md: 3 }}
-        flexWrap="wrap"
-        mb={{ base: 3, md: 4 }}
-      >
-        <InputGroup maxW={{ base: '100%', md: '300px' }} size={{ base: 'sm', md: 'md' }}>
-          <InputLeftElement pointerEvents="none" h={{ base: 8, md: 10 }}>
-            <FaMagnifyingGlass color="#a0aec0" />
-          </InputLeftElement>
-          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={text.searchPlaceholder} rounded="lg" fontSize={{ base: 'xs', md: 'sm' }} />
-        </InputGroup>
-
-        <Select value={type} onChange={(event) => setType(event.target.value)} maxW={{ base: '100%', sm: '130px', md: '160px' }} rounded="lg" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }}>
-          <option value="all">{text.allTypes}</option>
-          <option value="dog">{text.dog}</option>
-          <option value="cat">{text.cat}</option>
-        </Select>
-
-        <Select value={sort} onChange={(event) => setSort(event.target.value)} maxW={{ base: '100%', sm: '130px', md: '160px' }} rounded="lg" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }}>
-          <option value="newest">{text.newest}</option>
-          <option value="age">{text.age}</option>
-          <option value="breed">{text.breed}</option>
-        </Select>
-
-        <HStack ml={{ md: 'auto' }}>
-          <IconButton aria-label={text.gridView} icon={<FaGrip />} bg="orange.50" color="warm.brown" size={{ base: 'sm', md: 'md' }} />
-          <IconButton aria-label={text.listView} icon={<FaList />} variant="outline" size={{ base: 'sm', md: 'md' }} />
-        </HStack>
-      </Flex>
+      <MemberSearchToolbar
+        searchValue={query}
+        onSearchChange={setQuery}
+        searchPlaceholder={text.searchPlaceholder}
+        showViewButtons
+        selects={[
+          {
+            key: 'type',
+            value: type,
+            onChange: setType,
+            mobileMaxW: '104px',
+            options: [
+              { value: 'all', label: text.allTypes },
+              { value: 'dog', label: text.dog },
+              { value: 'cat', label: text.cat },
+            ],
+          },
+          {
+            key: 'sort',
+            value: sort,
+            onChange: setSort,
+            mobileMaxW: '112px',
+            options: [
+              { value: 'newest', label: text.newest },
+              { value: 'age', label: text.age },
+              { value: 'breed', label: text.breed },
+            ],
+          },
+        ]}
+      />
 
       {!user?.token ? (
         <EmptyState text={text.loginFirst} action={text.loginAction} onClick={() => navigate('/login')} />

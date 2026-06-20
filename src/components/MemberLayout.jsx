@@ -35,7 +35,7 @@ export default function MemberLayout({ title, subtitle, active = 'home', childre
       minH="calc(100vh - 96px)"
     >
       <Container maxW="1500px" px={{ base: 3, md: 6, xl: 8 }} py={{ base: 4, md: 7 }}>
-        <Flex align="start" gap={{ base: 3, md: 5, xl: 7 }}>
+        <Flex align="start" gap={{ base: 0, md: 5, xl: 7 }}>
           <MemberSidebar active={active} pathname={location.pathname} />
 
           <Box
@@ -77,7 +77,7 @@ function MemberSidebar({ active, pathname }) {
   };
 
   return (
-    <Box w={{ base: '74px', sm: '88px', md: '160px', lg: '230px' }} flexShrink={0}>
+    <Box display={{ base: 'none', md: 'block' }} w={{ md: '160px', lg: '230px' }} flexShrink={0}>
       <Box
         w="100%"
         flexShrink={0}

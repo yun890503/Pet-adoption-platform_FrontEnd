@@ -36,6 +36,7 @@ import {
   FaPlus,
 } from 'react-icons/fa6';
 import MemberLayout from '../components/MemberLayout.jsx';
+import MemberSearchToolbar from '../components/MemberSearchToolbar.jsx';
 import { odooApi } from '../services/odooApi.js';
 
 const times = ['09:30', '10:30', '13:30', '14:30', '15:30', '16:30'];
@@ -225,16 +226,26 @@ export default function VisitBooking() {
       </SimpleGrid>
 
       <Box bg="white" rounded="2xl" border="1px solid" borderColor="orange.100" boxShadow="lg" overflow="hidden">
-        <Flex p={{ base: 2.5, md: 4 }} gap={{ base: 2, md: 3 }} align="center" flexWrap="wrap" borderBottom="1px solid" borderColor="orange.100">
-          <HStack flex={{ base: '1 1 100%', md: '0 1 320px' }} bg="white" border="1px solid" borderColor="gray.200" rounded="lg" px={{ base: 2, md: 3 }}>
-            <Icon as={FaMagnifyingGlass} color="gray.400" boxSize={{ base: 3.5, md: 4 }} />
-            <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={text.search} border="0" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }} _focusVisible={{ boxShadow: 'none' }} />
-          </HStack>
-          <Select maxW={{ base: '100%', md: '180px' }} rounded="lg" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }} ml={{ md: 'auto' }} value={sort} onChange={(event) => setSort(event.target.value)}>
-            <option value="newest">{text.newest}</option>
-            <option value="oldest">{text.oldest}</option>
-          </Select>
-        </Flex>
+        <Box p={{ base: 2, md: 3 }} borderBottom="1px solid" borderColor="orange.100">
+          <MemberSearchToolbar
+            searchValue={query}
+            onSearchChange={setQuery}
+            searchPlaceholder={text.search}
+            mb={0}
+            selects={[
+              {
+                key: 'sort',
+                value: sort,
+                onChange: setSort,
+                mobileMaxW: '126px',
+                options: [
+                  { value: 'newest', label: text.newest },
+                  { value: 'oldest', label: text.oldest },
+                ],
+              },
+            ]}
+          />
+        </Box>
 
         <VStack align="stretch" spacing={0}>
           {loading ? (

@@ -25,10 +25,11 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaCalendarDays, FaClipboardCheck, FaClock, FaMagnifyingGlass, FaRegCircleXmark, FaSquareCheck } from 'react-icons/fa6';
 import MemberLayout from '../components/MemberLayout.jsx';
+import MemberSearchToolbar from '../components/MemberSearchToolbar.jsx';
 import { odooApi } from '../services/odooApi.js';
 import { getUser } from '../utils/storage.js';
 
@@ -46,6 +47,9 @@ export default function ProfileApplications() {
   const [animals, setAnimals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [animalsLoading, setAnimalsLoading] = useState(false);
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState('all');
+  const [sort, setSort] = useState('newest');
 
   const loadApplications = () => {
     setLoading(true);
@@ -77,6 +81,22 @@ export default function ProfileApplications() {
     rejected: 0,
     total: rows.length,
   };
+
+  const filteredRows = useMemo(() => {
+    const keyword = query.trim().toLowerCase();
+    return [...rows]
+      .filter((row) => {
+        const animal = row.animal || {};
+        const matchesKeyword = `${animal.name || ''} ${animal.breed || ''}`.toLowerCase().includes(keyword);
+        const matchesStatus = status === 'all' || row.status === status;
+        return matchesKeyword && matchesStatus;
+      })
+      .sort((a, b) => {
+        const aTime = new Date(a.createdAt || a.date || 0).getTime() || 0;
+        const bTime = new Date(b.createdAt || b.date || 0).getTime() || 0;
+        return sort === 'oldest' ? aTime - bTime : bTime - aTime;
+      });
+  }, [query, rows, sort, status]);
 
   return (
     <MemberLayout active="/profile/applications">
@@ -120,24 +140,47 @@ export default function ProfileApplications() {
       </Flex>
 
       <Box bg="white" rounded="2xl" border="1px solid" borderColor="orange.100" boxShadow="lg" overflow="hidden">
-        <Flex p={{ base: 2.5, md: 4 }} gap={{ base: 2, md: 3 }} align="center" flexWrap="wrap" borderBottom="1px solid" borderColor="orange.100">
-          <HStack flex={{ base: '1 1 100%', md: '0 1 300px' }} bg="white" border="1px solid" borderColor="gray.200" rounded="lg" px={{ base: 2, md: 3 }}>
-            <Icon as={FaMagnifyingGlass} color="gray.400" boxSize={{ base: 3.5, md: 4 }} />
-            <Input placeholder="搜尋毛孩名稱" border="0" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }} _focusVisible={{ boxShadow: 'none' }} />
-          </HStack>
-          <Select maxW={{ base: '100%', md: '260px' }} rounded="lg" placeholder="全部狀態" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }} />
-          <Select maxW={{ base: '100%', md: '180px' }} rounded="lg" ml={{ md: 'auto' }} defaultValue="newest" size={{ base: 'sm', md: 'md' }} fontSize={{ base: 'xs', md: 'sm' }}>
-            <option value="newest">最新申請</option>
-            <option value="oldest">較早申請</option>
-          </Select>
-        </Flex>
+        <Box p={{ base: 2, md: 3 }} borderBottom="1px solid" borderColor="orange.100">
+          <MemberSearchToolbar
+            searchValue={query}
+            onSearchChange={setQuery}
+            searchPlaceholder="搜尋毛孩名稱"
+            mb={0}
+            selects={[
+              {
+                key: 'status',
+                value: status,
+                onChange: setStatus,
+                mobileMaxW: '108px',
+                maxW: '180px',
+                options: [
+                  { value: 'all', label: '全部狀態' },
+                  { value: 'reviewing', label: '審核中' },
+                  { value: 'approved', label: '已通過' },
+                  { value: 'completed', label: '已完成' },
+                  { value: 'cancelled', label: '已取消' },
+                ],
+              },
+              {
+                key: 'sort',
+                value: sort,
+                onChange: setSort,
+                mobileMaxW: '108px',
+                options: [
+                  { value: 'newest', label: '最新申請' },
+                  { value: 'oldest', label: '較早申請' },
+                ],
+              },
+            ]}
+          />
+        </Box>
 
         <VStack align="stretch" spacing={0}>
           {loading ? (
             <Text p={6} fontWeight="900" color="warm.brown">
               正在讀取 Odoo 銷售認養申請...
             </Text>
-          ) : rows.length ? rows.map((row) => (
+          ) : filteredRows.length ? filteredRows.map((row) => (
             <ApplicationRow key={row.id} row={row} />
           )) : (
             <Text p={6} fontWeight="900" color="warm.brown">
