@@ -37,7 +37,7 @@ export async function beginLineLogin(returnTo) {
   const liff = await loadScript();
   await liff.init({ liffId: LIFF_ID });
   const nextReturnTo = returnTo || window.location.pathname + window.location.search || '/';
-  const redirectUri = `${window.location.origin}/line-callback`;
+  const redirectUri = `${window.location.origin}/login?lineCallback=1`;
 
   try {
     sessionStorage.setItem(LINE_LOGIN_PENDING_KEY, '1');
@@ -60,6 +60,7 @@ export function hasPendingLineLogin() {
     return (
       sessionStorage.getItem(LINE_LOGIN_PENDING_KEY) === '1' ||
       localStorage.getItem(LINE_LOGIN_PENDING_KEY) === '1' ||
+      new URLSearchParams(window.location.search).has('lineCallback') ||
       new URLSearchParams(window.location.search).has('liff.state')
     );
   } catch {
