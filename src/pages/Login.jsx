@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaEnvelope, FaFacebookF, FaGoogle, FaLine, FaLock, FaPaw, FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
+import { FaEnvelope, FaLine, FaLock, FaPaw, FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import authBg from '../../image/179a3ea4-9650-4a88-899a-e9577b965c72.png';
 import { odooApi } from '../services/odooApi.js';
 import { clearPendingLineLogin, getLineLoginPayload, hasPendingLineLogin } from '../services/lineAuth.js';
@@ -290,8 +290,7 @@ export function DividerText({ children }) {
 
 export function SocialButtons({ onLineClick, lineLoading = false } = {}) {
   return (
-    <HStack spacing={5} pt={0}>
-      <IconButton aria-label="Facebook 登入" icon={<FaFacebookF />} boxSize="42px" rounded="full" bg="#2f6fb8" color="white" fontSize="lg" _hover={{ bg: '#245d9d' }} />
+    <HStack spacing={5} pt={0} justify="center">
       <IconButton
         aria-label="LINE 登入"
         icon={<FaLine />}
@@ -304,7 +303,6 @@ export function SocialButtons({ onLineClick, lineLoading = false } = {}) {
         onClick={onLineClick}
         _hover={{ bg: '#2f925f' }}
       />
-      <IconButton aria-label="Google 登入" icon={<FaGoogle />} boxSize="42px" rounded="full" bg="#ef4444" color="white" fontSize="lg" _hover={{ bg: '#dc2626' }} />
     </HStack>
   );
 }
