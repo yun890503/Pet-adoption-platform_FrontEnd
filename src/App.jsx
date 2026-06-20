@@ -14,6 +14,7 @@ const About = lazy(() => import('./pages/About.jsx'));
 const Contact = lazy(() => import('./pages/Contact.jsx'));
 const AdoptionApply = lazy(() => import('./pages/AdoptionApply.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
+const LineCallback = lazy(() => import('./pages/LineCallback.jsx'));
 const Register = lazy(() => import('./pages/Register.jsx'));
 const Profile = lazy(() => import('./pages/Profile.jsx'));
 const Favorites = lazy(() => import('./pages/Favorites.jsx'));
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/adoption/apply/:id" element={<AdoptionApply />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/line-callback" element={<LineCallback />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/applications" element={<ProfileApplications />} />

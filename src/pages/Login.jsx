@@ -20,7 +20,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLine, FaLock, FaPaw, FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import authBg from '../../image/179a3ea4-9650-4a88-899a-e9577b965c72.png';
 import { odooApi } from '../services/odooApi.js';
-import { clearPendingLineLogin, getLineLoginPayload, hasPendingLineLogin } from '../services/lineAuth.js';
+import { beginLineLogin, clearPendingLineLogin, getLineLoginPayload, hasPendingLineLogin } from '../services/lineAuth.js';
 import { clearUser, saveUser } from '../utils/storage.js';
 
 export default function Login() {
@@ -81,7 +81,24 @@ export default function Login() {
   };
 
   const handleLineLogin = async () => {
-    finishLineLogin();
+    setLineLoading(true);
+    try {
+      const payload = await beginLineLogin('/');
+      if (payload) {
+        const user = await odooApi.lineLogin(payload);
+        saveUser(user);
+        toast({ title: 'LINE 登入成功', status: 'success' });
+        navigate('/', { replace: true });
+      }
+    } catch (error) {
+      toast({
+        title: 'LINE 登入失敗',
+        description: error.message || '請稍後再試，或改用 Email 登入。',
+        status: 'error',
+      });
+    } finally {
+      setLineLoading(false);
+    }
   };
 
   return (
@@ -292,6 +309,7 @@ export function SocialButtons({ onLineClick, lineLoading = false } = {}) {
   return (
     <HStack spacing={5} pt={0} justify="center">
       <IconButton
+        type="button"
         aria-label="LINE 登入"
         icon={<FaLine />}
         boxSize="42px"
