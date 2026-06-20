@@ -21,6 +21,8 @@ import AnimalCard from '../components/AnimalCard.jsx';
 import { odooApi } from '../services/odooApi.js';
 
 const animalsHeroImage = new URL('../../image/3a4e0cd3-5d24-477d-bca1-783aaf3ba9c9.png', import.meta.url).href;
+const animalsHeroDesktop = new URL('../../image/animals-hero-desktop.webp', import.meta.url).href;
+const animalsHeroMobile = new URL('../../image/animals-hero-mobile.webp', import.meta.url).href;
 
 const text = {
   all: '\u5168\u90e8',
@@ -130,14 +132,21 @@ export default function Animals() {
   return (
     <Box bg="linear-gradient(180deg, #fff8ea 0%, #fffaf3 58%, #fff4df 100%)" minH="calc(100vh - 90px)">
       <Box borderBottom="1px solid" borderColor="orange.100" bg="#fff7e8">
-        <Image
-          src={animalsHeroImage}
-          alt=""
-          w="100%"
-          h={{ base: '138px', md: '220px', lg: '300px' }}
-          objectFit="cover"
-          objectPosition="center"
-        />
+        <Box as="picture">
+          <source media="(max-width: 767px)" srcSet={animalsHeroMobile} type="image/webp" />
+          <source srcSet={animalsHeroDesktop} type="image/webp" />
+          <Image
+            src={animalsHeroImage}
+            alt=""
+            w="100%"
+            h={{ base: '138px', md: '220px', lg: '300px' }}
+            objectFit="cover"
+            objectPosition="center"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </Box>
       </Box>
 
       <Container maxW="1480px" px={{ base: 4, md: 6, xl: 8 }} py={{ base: 4, md: 6 }}>

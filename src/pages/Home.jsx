@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import heroImage from '../../image/129a5a5e-4aba-4480-8df1-d504932ab69.png?url';
+import heroImageDesktop from '../../image/home-hero-desktop.webp?url';
+import heroImageMobile from '../../image/home-hero-mobile.webp?url';
 import AdoptionModal from '../components/AdoptionModal.jsx';
 import AnimalCard from '../components/AnimalCard.jsx';
 import PrepSection from '../components/PrepSection.jsx';
@@ -87,15 +89,22 @@ function Hero() {
   return (
     <Box as="section" bg="warm.cream" overflow="hidden" borderBottom="1px solid" borderColor="orange.100">
       <MotionBox initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65 }}>
-        <Image
-          src={`${heroImage}?v=20260617-hero-2`}
-          alt="暖心毛孩認養主視覺"
-          w="100%"
-          maxW="1280px"
-          mx="auto"
-          display="block"
-          objectFit="contain"
-        />
+        <Box as="picture">
+          <source media="(max-width: 767px)" srcSet={heroImageMobile} type="image/webp" />
+          <source srcSet={heroImageDesktop} type="image/webp" />
+          <Image
+            src={`${heroImage}?v=20260617-hero-2`}
+            alt="暖心毛孩認養主視覺"
+            w="100%"
+            maxW="1280px"
+            mx="auto"
+            display="block"
+            objectFit="contain"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </Box>
       </MotionBox>
     </Box>
   );
